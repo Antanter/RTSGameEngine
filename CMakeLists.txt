@@ -1,22 +1,32 @@
-cmake_minimum_required(VERSION 3.15)
-project(MyProject VERSION 1.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.10)
+project(RTSGameEngine)
 
-# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Source files
+# Ищем OpenGL и GLUT
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+
+# GLFW как сабмодуль или пакет
+find_package(glfw3 REQUIRED)
+
+# Добавляем исполняемый файл
 add_executable(RTSGameEngine
-        src/main.cpp
-        src/main.cpp
-        src/main.cpp
-        src/main.cpp
+    src/main.cpp
+    src/glad.c
 )
 
-# Include directories
+# Папка include с GLAD и GLFW
 target_include_directories(RTSGameEngine
-        PRIVATE
-        RTSGameEngine/include
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+# Линкуем библиотеки
+target_link_libraries(RTSGameEngine
+    glfw
+    OpenGL::GL
+    GLUT::GLUT
 )
 
 # OS-specific settings
