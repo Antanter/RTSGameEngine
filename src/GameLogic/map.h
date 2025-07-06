@@ -36,11 +36,29 @@ class Map {
         int minY = std::max(0, int((screenTop / TILE_SIZE) - 2));
         int maxY = std::min(GRID_HEIGHT, int((screenBottom / TILE_SIZE) + 2));
 
+        glPushMatrix(); // Сохраняем текущую матрицу
+
+        // Повернуть карту
+        glRotatef(45.0f, 0.0f, 0.0f, 1.0f); // Поворот вокруг Z на 45°
+
+        // Сжать по вертикали
+        glScalef(1.0f, 0.5f, 1.0f); // Сжатие по Y
+
+        // Наклонить (если хочешь эффекта SimCity)
+        glMultMatrixf(glm::value_ptr(glm::mat4(
+            1.0f, -0.5f, 0.0f, 0.0f,
+            0.0f, 1.0f,  0.0f, 0.0f,
+            0.0f, 0.0f,  1.0f, 0.0f,
+            0.0f, 0.0f,  0.0f, 1.0f
+        )));
+
         for (int y = minY; y <= maxY; ++y) {
             for (int x = minX; x <= maxX; ++x) {
                 drawTile(x, y);
             }
         }
+
+        glPopMatrix(); // Восстанавливаем матрицу
     }
 
     void drawTile(int x, int y) {

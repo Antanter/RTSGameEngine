@@ -8,7 +8,7 @@ class Camera {
 
     glm::vec2 position;
     float zoom;
-    float speed = 500.0f;
+    const float speed = 1500.0f;
 
     Camera()
         : position(0.0f, 0.0f), zoom(1.0f) {}

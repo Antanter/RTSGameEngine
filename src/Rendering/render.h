@@ -7,7 +7,7 @@
 #include <thread>
 #include <iostream>
 
-#include "map.h"
+#include "../GameLogic/map.h"
 #include "camera.h"
 
 class Renderer {
@@ -72,24 +72,24 @@ public:
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            float screenLeft   = camera.position.x - videoMode->width / camera.zoom * 2;
+            float screenRight  = camera.position.x + videoMode->width / camera.zoom * 2;
+            float screenTop    = camera.position.y - videoMode->height / camera.zoom * 2;
+            float screenBottom = camera.position.y + videoMode->height / camera.zoom * 2;
+
             // Настраиваем матрицу проекции и камеры
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             glOrtho(
-                camera.position.x,
-                camera.position.x + videoMode->width / camera.zoom,
-                camera.position.y,
-                camera.position.y + videoMode->height / camera.zoom,
+                screenLeft,
+                screenRight,
+                screenTop,
+                screenBottom,
                 -1.0, 1.0
             );
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
-
-            float screenLeft   = camera.position.x;
-            float screenRight  = camera.position.x + videoMode->width / camera.zoom;
-            float screenTop    = camera.position.y;
-            float screenBottom = camera.position.y + videoMode->height / camera.zoom;
 
             // Отрисовка карты
             map.render(screenLeft, screenRight, screenTop, screenBottom);

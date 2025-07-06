@@ -1,8 +1,8 @@
 #pragma once
 
-#include <random>
-
 #include "TileType.hpp"
+
+#include <random>
 
 class Tile {
     private:

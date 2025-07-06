@@ -1,5 +1,5 @@
-#include "render.h"
-#include "map.h"
+#include "Rendering/render.h"
+#include "GameLogic/map.h"
 #include <iostream>
 
 int main() {
