@@ -36,54 +36,48 @@ class Map {
         int minY = std::max(0, int((screenTop / TILE_SIZE) - 2));
         int maxY = std::min(GRID_HEIGHT, int((screenBottom / TILE_SIZE) + 2));
 
-        glPushMatrix(); // Сохраняем текущую матрицу
-
-        // Повернуть карту
-        glRotatef(45.0f, 0.0f, 0.0f, 1.0f); // Поворот вокруг Z на 45°
-
-        // Сжать по вертикали
-        glScalef(1.0f, 0.5f, 1.0f); // Сжатие по Y
-
-        // Наклонить (если хочешь эффекта SimCity)
-        glMultMatrixf(glm::value_ptr(glm::mat4(
-            1.0f, -0.5f, 0.0f, 0.0f,
-            0.0f, 1.0f,  0.0f, 0.0f,
-            0.0f, 0.0f,  1.0f, 0.0f,
-            0.0f, 0.0f,  0.0f, 1.0f
-        )));
-
         for (int y = minY; y <= maxY; ++y) {
             for (int x = minX; x <= maxX; ++x) {
                 drawTile(x, y);
             }
         }
-
-        glPopMatrix(); // Восстанавливаем матрицу
     }
 
     void drawTile(int x, int y) {
         Tile& tile = grid[y * GRID_WIDTH + x];
-        
-        float isoX = (x - y) * (TILE_SIZE / 2.0f);
-        float isoY = (x + y) * (TILE_SIZE / 4.0f);
-
+    
+        float isoX = (x - y) * (TILE_SIZE);
+        float isoY = (x + y) * (TILE_SIZE * 0.75f);
+    
         float r, g, b;
         tile.getColor(r, g, b);
         glColor3f(r, g, b);
+    
+        glPushMatrix();
+        glTranslatef(isoX, isoY, 0.0f);
+        glScalef(1.0f, 0.5f, 1.0f);
+
+        auto now = std::chrono::system_clock::now();
+
+        glTranslatef(TILE_SIZE / 2, TILE_SIZE / 2, 0.0f);
+        glRotatef(45.0f + static_cast<float>(std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count() % 360) * 5, 0.0f, 0.0f, 1.0f);
+        glTranslatef(-TILE_SIZE / 2, -TILE_SIZE / 2, 0.0f);
 
         glBegin(GL_QUADS);
-            glVertex2f(isoX,                 isoY + TILE_SIZE / 2);
-            glVertex2f(isoX + TILE_SIZE / 2, isoY);
-            glVertex2f(isoX,                 isoY - TILE_SIZE / 2);
-            glVertex2f(isoX - TILE_SIZE / 2, isoY);
+            glVertex2f(0, TILE_SIZE / 2);
+            glVertex2f(TILE_SIZE, TILE_SIZE / 2);
+            glVertex2f(TILE_SIZE, -TILE_SIZE / 2);
+            glVertex2f(0, -TILE_SIZE / 2);
         glEnd();
 
         glColor3f(0.0f, 0.0f, 0.0f);
         glBegin(GL_LINE_LOOP);
-            glVertex2f(isoX,                 isoY + TILE_SIZE / 2);
-            glVertex2f(isoX + TILE_SIZE / 2, isoY);
-            glVertex2f(isoX,                 isoY - TILE_SIZE / 2);
-            glVertex2f(isoX - TILE_SIZE / 2, isoY);
+            glVertex2f(0, TILE_SIZE / 2);
+            glVertex2f(TILE_SIZE, TILE_SIZE / 2);
+            glVertex2f(TILE_SIZE, -TILE_SIZE / 2);
+            glVertex2f(0, -TILE_SIZE / 2);
         glEnd();
-    }
+    
+        glPopMatrix();
+    }    
 };
