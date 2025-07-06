@@ -7,34 +7,36 @@
 #include <thread>
 #include <iostream>
 
-class Renderer {
-    private:
+#include "map.h"
+#include "camera.h"
 
+class Renderer {
+private:
     const int TARGET_FPS = 60;
     const double FRAME_TIME = 1.0 / TARGET_FPS;
+
+    Map map;
+    Camera camera;
 
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
         glViewport(0, 0, width, height);
     }
 
-    public:
-
+public:
     int render() {
+        // ==== Инициализация GLFW и OpenGL ====
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
-        // Get the primary monitor
         GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* videoMode = glfwGetVideoMode(primaryMonitor);
 
-        // Create a fullscreen window on the primary monitor
         GLFWwindow* window = glfwCreateWindow(
             videoMode->width, videoMode->height,
             "Fullscreen OpenGL Window",
-            primaryMonitor, // <- Fullscreen
-            NULL);
+            primaryMonitor, NULL);
 
         if (window == NULL) {
             std::cerr << "Failed to create GLFW window\n";
@@ -49,31 +51,61 @@ class Renderer {
             return -1;
         }
 
-        // Set viewport and callback
         glViewport(0, 0, videoMode->width, videoMode->height);
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-        // Game/render loop
+        glfwSetWindowUserPointer(window, &camera);
+        glfwSetScrollCallback(window, [](GLFWwindow* win, double xoffset, double yoffset) {
+            Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(win));
+            if (cam) cam->processScroll(yoffset);
+        });
+
+        auto lastTime = std::chrono::high_resolution_clock::now();
+
+        // ==== Главный цикл ====
         while (!glfwWindowShouldClose(window)) {
             auto frameStart = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<float> deltaTime = frameStart - lastTime;
+            lastTime = frameStart;
 
-            // ==== Render ====
+            // ==== Рендер ====
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            // Настраиваем матрицу проекции и камеры
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(
+                camera.position.x,
+                camera.position.x + videoMode->width / camera.zoom,
+                camera.position.y,
+                camera.position.y + videoMode->height / camera.zoom,
+                -1.0, 1.0
+            );
+
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+
+            float screenLeft   = camera.position.x;
+            float screenRight  = camera.position.x + videoMode->width / camera.zoom;
+            float screenTop    = camera.position.y;
+            float screenBottom = camera.position.y + videoMode->height / camera.zoom;
+
+            // Отрисовка карты
+            map.render(screenLeft, screenRight, screenTop, screenBottom);
+
             glfwSwapBuffers(window);
             glfwPollEvents();
-            // ================
 
-            // ==== Reduce FPS ====
+            camera.processKeyboard(window, camera.speed, deltaTime.count());
+
+            // ==== Стабилизация FPS ====
             auto frameEnd = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsed = frameEnd - frameStart;
-
             double sleepTime = FRAME_TIME - elapsed.count();
             if (sleepTime > 0) {
                 std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
             }
-            // =========================
         }
 
         glfwTerminate();

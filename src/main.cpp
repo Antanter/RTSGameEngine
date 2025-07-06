@@ -1,10 +1,10 @@
 #include "render.h"
+#include "map.h"
 #include <iostream>
 
 int main() {
+    Map map;
     Renderer renderer;
-    renderer.render();
 
-    
-    return 0;
+    return renderer.render();
 }
