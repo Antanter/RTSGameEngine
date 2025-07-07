@@ -18,10 +18,12 @@ class Map {
     std::uniform_int_distribution<> dist;
 
     std::vector<Tile> grid;
+    //std::chrono::steady_clock::time_point start;
 
     public:
 
     Map() : gen(rd()), dist(-100, 100) {
+        //start = std::chrono::steady_clock::now();
         grid.reserve(GRID_WIDTH * GRID_HEIGHT);
         for (int i = 0; i < GRID_WIDTH * GRID_HEIGHT; ++i) {
             grid.emplace_back(dist(gen) / 2000.0f);
@@ -31,23 +33,24 @@ class Map {
     Tile getTile(int x, int y) { return grid.at(y * GRID_WIDTH + x); }
 
     void render(float screenLeft, float screenRight, float screenTop, float screenBottom) {
-        int minX = std::max(0, int((screenLeft / TILE_SIZE) - 2));
-        int maxX = std::min(GRID_WIDTH, int((screenRight / TILE_SIZE) + 2));
-        int minY = std::max(0, int((screenTop / TILE_SIZE) - 2));
-        int maxY = std::min(GRID_HEIGHT, int((screenBottom / TILE_SIZE) + 2));
-
+        int minX = std::max(0, int((screenLeft * cos(45.0f) / TILE_SIZE)));
+        int maxX = std::min(GRID_WIDTH, int(screenRight / (TILE_SIZE * cos(45.0f))));
+        int minY = std::max(0, int((screenTop * sin(45.0f) / TILE_SIZE)));
+        int maxY = std::min(GRID_HEIGHT, int(screenBottom / (TILE_SIZE * sin(45.0f))));
+    
         for (int y = minY; y <= maxY; ++y) {
             for (int x = minX; x <= maxX; ++x) {
                 drawTile(x, y);
             }
         }
     }
+    
 
     void drawTile(int x, int y) {
         Tile& tile = grid[y * GRID_WIDTH + x];
     
-        float isoX = (x - y) * (TILE_SIZE);
-        float isoY = (x + y) * (TILE_SIZE * 0.75f);
+        float isoX = (x - y) * (TILE_SIZE * cos(45.0f));
+        float isoY = (x + y) * (TILE_SIZE * sin(60.0f));
     
         float r, g, b;
         tile.getColor(r, g, b);
@@ -56,11 +59,11 @@ class Map {
         glPushMatrix();
         glTranslatef(isoX, isoY, 0.0f);
         glScalef(1.0f, 0.5f, 1.0f);
-
-        auto now = std::chrono::system_clock::now();
+        
+        //auto now = std::chrono::system_clock::now();
 
         glTranslatef(TILE_SIZE / 2, TILE_SIZE / 2, 0.0f);
-        glRotatef(45.0f + static_cast<float>(std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count() % 360) * 5, 0.0f, 0.0f, 1.0f);
+        glRotatef(45.0f, 0.0f, 0.0f, 1.0f);
         glTranslatef(-TILE_SIZE / 2, -TILE_SIZE / 2, 0.0f);
 
         glBegin(GL_QUADS);
