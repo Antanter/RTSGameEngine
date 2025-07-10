@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "../GameLogic/map.h"
+#include "../MenUI/menu.h"
 #include "camera.h"
 
 class Renderer {
@@ -17,6 +18,7 @@ private:
 
     Map map;
     Camera camera;
+    Menu menuController;
 
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
         glViewport(0, 0, width, height);
@@ -64,6 +66,8 @@ public:
 
         // ==== Главный цикл ====
         while (!glfwWindowShouldClose(window)) {
+            menuController.ProvoqueMenu(videoMode->width, videoMode->height);
+
             auto frameStart = std::chrono::high_resolution_clock::now();
             std::chrono::duration<float> deltaTime = frameStart - lastTime;
             lastTime = frameStart;
