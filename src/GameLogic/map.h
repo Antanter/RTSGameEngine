@@ -11,7 +11,7 @@ class Map {
 
     const int GRID_WIDTH = 1000;
     const int GRID_HEIGHT = 1000;
-    const int TILE_SIZE = 75;
+    const int TILE_SIZE = 150;
 
     std::random_device rd;
     std::mt19937 gen;
@@ -33,10 +33,10 @@ class Map {
     Tile getTile(int x, int y) { return grid.at(y * GRID_WIDTH + x); }
 
     void render(float screenLeft, float screenRight, float screenTop, float screenBottom) {
-        int minX = std::max(0, int((screenLeft * cos(45.0f) / TILE_SIZE)));
-        int maxX = std::min(GRID_WIDTH, int(screenRight / (TILE_SIZE * cos(45.0f))));
-        int minY = std::max(0, int((screenTop * sin(45.0f) / TILE_SIZE)));
-        int maxY = std::min(GRID_HEIGHT, int(screenBottom / (TILE_SIZE * sin(45.0f))));
+        int minX = std::max(0, int((screenLeft / (TILE_SIZE * 0.33f))));
+        int maxX = std::min(GRID_WIDTH, int(screenRight / (TILE_SIZE * 0.33f)));
+        int minY = std::max(0, int((screenTop / (TILE_SIZE * 0.33f))));
+        int maxY = std::min(GRID_HEIGHT, int(screenBottom / (TILE_SIZE * 0.33f)));
     
         for (int y = minY; y <= maxY; ++y) {
             for (int x = minX; x <= maxX; ++x) {
@@ -45,12 +45,11 @@ class Map {
         }
     }
     
-
     void drawTile(int x, int y) {
         Tile& tile = grid[y * GRID_WIDTH + x];
     
-        float isoX = (x - y) * (TILE_SIZE * cos(45.0f));
-        float isoY = (x + y) * (TILE_SIZE * sin(60.0f));
+        float isoX = (x - y) * (TILE_SIZE * 0.75f);
+        float isoY = (x + y) * (TILE_SIZE * 0.33f);
     
         float r, g, b;
         tile.getColor(r, g, b);
