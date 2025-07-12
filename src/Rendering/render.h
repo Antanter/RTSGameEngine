@@ -7,26 +7,23 @@
 #include <thread>
 #include <iostream>
 
-#include "../GameLogic/map.h"
-#include "../MenUI/menu.h"
 #include "camera.h"
 
 class Renderer {
-private:
-    const int TARGET_FPS = 60;
-    const double FRAME_TIME = 1.0 / TARGET_FPS;
+    private:
 
-    Map map;
+    const int TARGET_FPS = 60;
+    const double FRAME_PERIOD = 1.0 / TARGET_FPS;
+
     Camera camera;
-    Menu menuController;
 
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
         glViewport(0, 0, width, height);
     }
 
-public:
+    public:
+
     int render() {
-        // ==== Инициализация GLFW и OpenGL ====
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -64,15 +61,12 @@ public:
 
         auto lastTime = std::chrono::high_resolution_clock::now();
 
-        // ==== Главный цикл ====
         while (!glfwWindowShouldClose(window)) {
-            menuController.ProvoqueMenu(videoMode->width, videoMode->height);
 
             auto frameStart = std::chrono::high_resolution_clock::now();
             std::chrono::duration<float> deltaTime = frameStart - lastTime;
             lastTime = frameStart;
 
-            // ==== Рендер ====
             glClearColor(0.2f, 0.3f, 0.6f, 0.8f);
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -81,7 +75,6 @@ public:
             float screenTop    = camera.position.y - videoMode->height / camera.zoom * 2;
             float screenBottom = camera.position.y + videoMode->height / camera.zoom * 2;
 
-            // Настраиваем матрицу проекции и камеры
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             glOrtho(
@@ -95,21 +88,15 @@ public:
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
 
-            // Отрисовка карты
-            map.render(screenLeft, screenRight, screenTop, screenBottom);
-
             glfwSwapBuffers(window);
             glfwPollEvents();
 
             camera.processKeyboard(window, camera.speed, deltaTime.count());
 
-            // ==== Стабилизация FPS ====
             auto frameEnd = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsed = frameEnd - frameStart;
-            double sleepTime = FRAME_TIME - elapsed.count();
-            if (sleepTime > 0) {
-                std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
-            }
+            double sleepTime = FRAME_PERIOD - elapsed.count();
+            if (sleepTime > 0) std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
         }
 
         glfwTerminate();
