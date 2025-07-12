@@ -7,13 +7,13 @@
 #include <thread>
 #include <iostream>
 
-class Menu {
+class Menu : public Renderable {
     public:
     
-    void ProvoqueMenu(int width, int height) {
+    void render(float x1, float x2, float y1, float y2) override {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0, width, 0, height, -1, 1);
+        glOrtho(0, x2 - x1, 0, y2 - y1, -1, 1);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
     }

@@ -3,25 +3,35 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 #include <chrono>
 #include <thread>
 #include <iostream>
 
 #include "camera.h"
 
+class Renderable {
+    public:
+
+    virtual void render(float, float, float, float) = 0;
+    virtual ~Renderable() {}
+};  
+
 class Renderer {
     private:
 
     const int TARGET_FPS = 60;
     const double FRAME_PERIOD = 1.0 / TARGET_FPS;
-
+    
     Camera camera;
 
-    static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-        glViewport(0, 0, width, height);
-    }
-
+    std::vector<Renderable*> renderQueue;
+    
     public:
+
+    void addObject(Renderable* obj) {
+        renderQueue.push_back(obj);
+    }
 
     int render() {
         glfwInit();
@@ -51,7 +61,6 @@ class Renderer {
         }
 
         glViewport(0, 0, videoMode->width, videoMode->height);
-        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
         glfwSetWindowUserPointer(window, &camera);
         glfwSetScrollCallback(window, [](GLFWwindow* win, double xoffset, double yoffset) {
@@ -62,7 +71,6 @@ class Renderer {
         auto lastTime = std::chrono::high_resolution_clock::now();
 
         while (!glfwWindowShouldClose(window)) {
-
             auto frameStart = std::chrono::high_resolution_clock::now();
             std::chrono::duration<float> deltaTime = frameStart - lastTime;
             lastTime = frameStart;
@@ -75,18 +83,18 @@ class Renderer {
             float screenTop    = camera.position.y - videoMode->height / camera.zoom * 2;
             float screenBottom = camera.position.y + videoMode->height / camera.zoom * 2;
 
+            printf("%f %f %f %f\n", screenBottom, screenLeft, screenRight, screenTop);
+
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            glOrtho(
-                screenLeft,
-                screenRight,
-                screenTop,
-                screenBottom,
-                -1.0, 1.0
-            );
+            glOrtho(screenLeft, screenRight, screenTop, screenBottom, -1.0, 1.0);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
+
+            for (Renderable* obj : renderQueue) {
+                obj->render(screenLeft, screenRight, screenBottom, screenTop);
+            }
 
             glfwSwapBuffers(window);
             glfwPollEvents();
@@ -103,3 +111,4 @@ class Renderer {
         return 0;
     }
 };
+    
