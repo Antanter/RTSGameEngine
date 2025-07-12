@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "camera.h"
+#include "text.h"
 
 class Renderable {
     public:
@@ -69,21 +70,20 @@ class Renderer {
         });
 
         auto lastTime = std::chrono::high_resolution_clock::now();
+        Text::getInstance().InitText(videoMode->width, videoMode->height);
 
         while (!glfwWindowShouldClose(window)) {
             auto frameStart = std::chrono::high_resolution_clock::now();
             std::chrono::duration<float> deltaTime = frameStart - lastTime;
             lastTime = frameStart;
 
-            glClearColor(0.2f, 0.3f, 0.6f, 0.8f);
+            glClearColor(0.2f, 0.3f, 0.6f, 0.7f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             float screenLeft   = camera.position.x - videoMode->width / camera.zoom * 2;
             float screenRight  = camera.position.x + videoMode->width / camera.zoom * 2;
             float screenTop    = camera.position.y - videoMode->height / camera.zoom * 2;
             float screenBottom = camera.position.y + videoMode->height / camera.zoom * 2;
-
-            printf("%f %f %f %f\n", screenBottom, screenLeft, screenRight, screenTop);
 
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();

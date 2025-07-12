@@ -13,8 +13,9 @@ find_package(glfw3 REQUIRED)
 # Добавляем исполняемый файл
 add_executable(RTSGameEngine
     src/main.cpp
-    src/glad.c
 )
+
+include_directories(/usr/include/freetype2)
 
 # Папка include с GLAD и GLFW
 target_include_directories(RTSGameEngine

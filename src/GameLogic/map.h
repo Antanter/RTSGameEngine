@@ -33,9 +33,13 @@ class Map : public Renderable {
     void render(float screenLeft, float screenRight, float screenTop, float screenBottom) override {
         int minX = std::max(0, int((screenLeft / (TILE_SIZE * 0.33f))));
         int maxX = std::min(GRID_WIDTH, int(screenRight / (TILE_SIZE * 0.33f)));
-        int minY = std::max(0, int((screenTop / (TILE_SIZE * 0.33f))));
-        int maxY = std::min(GRID_HEIGHT, int(screenBottom / (TILE_SIZE * 0.33f)));
-    
+        int minY = std::max(0, int((screenBottom / (TILE_SIZE * 0.33f))));
+        int maxY = std::min(GRID_HEIGHT, int(screenTop / (TILE_SIZE * 0.33f)));
+
+        char buffer[256];
+        sprintf(buffer, "%d %d %d %d", minX, maxX, minY, maxY);
+        Text::getInstance().AddLabel(buffer, 25.0f, 25.0f);
+
         for (int y = minY; y <= maxY; ++y) {
             for (int x = minX; x <= maxX; ++x) {
                 drawTile(x, y);
