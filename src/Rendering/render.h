@@ -9,14 +9,8 @@
 #include <iostream>
 
 #include "camera.h"
+#include "renderable.h"
 #include "text.h"
-
-class Renderable {
-    public:
-
-    virtual void render(float, float, float, float) = 0;
-    virtual ~Renderable() {}
-};  
 
 class Renderer {
     private:
@@ -38,7 +32,7 @@ class Renderer {
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* videoMode = glfwGetVideoMode(primaryMonitor);

@@ -3,34 +3,36 @@ project(RTSGameEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Ищем OpenGL и GLUT
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
-
-# GLFW как сабмодуль или пакет
 find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
+find_package(Freetype REQUIRED)
 
-# Добавляем исполняемый файл
 add_executable(RTSGameEngine
     src/main.cpp
+        src/Rendering/renderable.h
+        src/Rendering/label.h
+        src/Rendering/text.cpp
 )
 
+# Can be deleted
 include_directories(/usr/include/freetype2)
 
-# Папка include с GLAD и GLFW
 target_include_directories(RTSGameEngine
     PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include # Can be deleted ??
 )
 
-# Линкуем библиотеки
 target_link_libraries(RTSGameEngine
+    PRIVATE
     glfw
     OpenGL::GL
     GLUT::GLUT
+    glm::glm
+    Freetype::Freetype
 )
 
-# OS-specific settings
 if(WIN32)
     message(STATUS "Configuring for Windows")
     target_compile_definitions(RTSGameEngine PRIVATE PLATFORM_WINDOWS)
