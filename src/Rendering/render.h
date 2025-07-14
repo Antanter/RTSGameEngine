@@ -1,67 +1,83 @@
+#pragma once
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <chrono>
 #include <thread>
 #include <iostream>
+#include <algorithm>
+
+class Renderable {
+    public:
+    virtual void render(float screenLeft, float screenRight, float screenBottom, float screenTop, const glm::mat4& projection, const glm::mat4& view) = 0;
+    virtual ~Renderable() {}
+};
 
 #include "camera.h"
 #include "text.h"
 
-class Renderable {
-    public:
+struct RenderItem {
+    Renderable* object;
+    float z;
+    bool fixed;
 
-    virtual void render(float, float, float, float) = 0;
-    virtual ~Renderable() {}
-};  
+    RenderItem(Renderable* obj, float zLayer, float isFixed) : object(obj), z(zLayer), fixed(isFixed) {}
+};
 
 class Renderer {
     private:
 
     const int TARGET_FPS = 60;
     const double FRAME_PERIOD = 1.0 / TARGET_FPS;
-    
+
+    GLFWwindow* window;
     Camera camera;
 
-    std::vector<Renderable*> renderQueue;
-    
+    glm::mat4 stdproj;
+    glm::mat4 projection;
+    glm::mat4 view;
+
+    std::vector<RenderItem> renderQueue;
+
     public:
 
-    void addObject(Renderable* obj) {
-        renderQueue.push_back(obj);
-    }
+    float width, height;
 
-    int render() {
-        glfwInit();
+    Renderer() {
+        if (!glfwInit()) {
+            std::cerr << "Failed to initialize GLFW\n";
+            exit(-1);
+        }
+
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* videoMode = glfwGetVideoMode(primaryMonitor);
 
-        GLFWwindow* window = glfwCreateWindow(
-            videoMode->width, videoMode->height,
-            "Fullscreen OpenGL Window",
-            primaryMonitor, NULL);
+        width = videoMode->width;
+        height = videoMode->height;
 
-        if (window == NULL) {
+        window = glfwCreateWindow(width, height, "RTS", primaryMonitor, nullptr);
+        if (!window) {
             std::cerr << "Failed to create GLFW window\n";
             glfwTerminate();
-            return -1;
+            exit(-1);
         }
-
         glfwMakeContextCurrent(window);
 
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
             std::cerr << "Failed to initialize GLAD\n";
-            return -1;
+            glfwTerminate();
+            exit(-1);
         }
 
-        glViewport(0, 0, videoMode->width, videoMode->height);
+        std::cout << "OpenGL version: " << glGetString(GL_VERSION) << "\n";
+        glViewport(0, 0, width, height);
 
         glfwSetWindowUserPointer(window, &camera);
         glfwSetScrollCallback(window, [](GLFWwindow* win, double xoffset, double yoffset) {
@@ -69,32 +85,41 @@ class Renderer {
             if (cam) cam->processScroll(yoffset);
         });
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    void addObject(Renderable* obj, float zLayer = 0.0f, float isFixed = false) {
+        renderQueue.emplace_back(obj, zLayer, isFixed);
+    }    
+
+    int render() {
         auto lastTime = std::chrono::high_resolution_clock::now();
-        Text::getInstance().InitText(videoMode->width, videoMode->height);
 
         while (!glfwWindowShouldClose(window)) {
             auto frameStart = std::chrono::high_resolution_clock::now();
             std::chrono::duration<float> deltaTime = frameStart - lastTime;
             lastTime = frameStart;
 
-            glClearColor(0.2f, 0.3f, 0.6f, 0.7f);
+            glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            float screenLeft   = camera.position.x - videoMode->width / camera.zoom * 2;
-            float screenRight  = camera.position.x + videoMode->width / camera.zoom * 2;
-            float screenTop    = camera.position.y - videoMode->height / camera.zoom * 2;
-            float screenBottom = camera.position.y + videoMode->height / camera.zoom * 2;
+            float screenLeft   = camera.position.x - width / camera.zoom * 2;
+            float screenRight  = camera.position.x + width / camera.zoom * 2;
+            float screenTop    = camera.position.y + height / camera.zoom * 2;
+            float screenBottom = camera.position.y - height / camera.zoom * 2;
 
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(screenLeft, screenRight, screenTop, screenBottom, -1.0, 1.0);
+            view = glm::translate(glm::mat4(1.0f), -glm::vec3(camera.position, 0.0f));
+            projection = glm::ortho(screenLeft, screenRight, screenBottom, screenTop);
+            stdproj = glm::ortho(0.0f, width, 0.0f, height);
 
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
+            std::sort(renderQueue.begin(), renderQueue.end(), [](const RenderItem& a, const RenderItem& b) {
+                return a.z < b.z;
+            });
 
-            for (Renderable* obj : renderQueue) {
-                obj->render(screenLeft, screenRight, screenBottom, screenTop);
-            }
+            for (const auto& item : renderQueue) {
+                item.object->render(screenLeft, screenRight, screenTop, screenBottom, item.fixed ? stdproj : projection, view);
+            }            
 
             glfwSwapBuffers(window);
             glfwPollEvents();
@@ -104,11 +129,12 @@ class Renderer {
             auto frameEnd = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsed = frameEnd - frameStart;
             double sleepTime = FRAME_PERIOD - elapsed.count();
-            if (sleepTime > 0) std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
+            if (sleepTime > 0) {
+                std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
+            }
         }
 
         glfwTerminate();
         return 0;
     }
 };
-    

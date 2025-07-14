@@ -1,4 +1,5 @@
 #pragma once
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
@@ -10,8 +11,7 @@ class Camera {
     float zoom;
     const float speed = 1500.0f;
 
-    Camera()
-        : position(0.0f, 0.0f), zoom(1.0f) {}
+    Camera() : position(0.0f, 0.0f), zoom(0.1f) {}
 
     glm::mat4 getViewProjection(int screenWidth, int screenHeight) const {
         glm::mat4 projection = glm::ortho(
@@ -32,7 +32,7 @@ class Camera {
 
     void changeZoom(float factor) {
         zoom *= factor;
-        if (zoom < 0.1f) zoom = 0.1f;
+        if (zoom < 0.01f) zoom = 0.01f;
         if (zoom > 10.0f) zoom = 10.0f;
     }
 

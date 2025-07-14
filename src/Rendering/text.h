@@ -1,3 +1,5 @@
+#pragma once
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -12,21 +14,18 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-class Label {
-    public:
-
-    std::string text;
-    float x;
-    float y;
-    float scale; 
-    glm::vec3 color;
-
-    Label(std::string text, float x, float y, float scale, glm::vec3 color)
-        : text(text), x(x), y(y), scale(scale), color(color) {}
-};
-
 class Text : public Renderable {
     private:
+
+    struct Label {
+        std::string text;
+        float x;
+        float y;
+        float scale; 
+        glm::vec3 color;
+    
+        Label(std::string text, float x, float y, float scale, glm::vec3 color) : text(text), x(x), y(y), scale(scale), color(color) {}
+    };
 
     FT_Face face;
     FT_Library ft;
@@ -48,10 +47,10 @@ class Text : public Renderable {
     #version 330 core
     in vec2 TexCoords;
     out vec4 FragColor;
-    
+
     uniform sampler2D text;
     uniform vec3 textColor;
-    
+
     void main() {
         float alpha = texture(text, TexCoords).r;
         FragColor = vec4(textColor, alpha);
@@ -73,7 +72,6 @@ class Text : public Renderable {
 
     std::vector<Label> UI;
     std::map<char, Character> Characters;
-    glm::mat4 projection;
 
     Text() {}
     Text(const Text&) = delete;
@@ -81,12 +79,19 @@ class Text : public Renderable {
 
     public:
 
+    void InitText() {
+        InitShaders();
+        DownloadEncoding();
+        DownloadGlyphs();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
     static Text& getInstance() {
         static Text instance;
         return instance;
     }
-
-    Text(float screenWidth, float screenHeight) { InitText(screenWidth, screenHeight); }
 
     void InitShaders() {
         unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -123,7 +128,7 @@ class Text : public Renderable {
             std::cerr << "Failed to init FreeType\n";
         }
 
-        if (FT_New_Face(ft, "arial.ttf", 0, &face)) {
+        if (FT_New_Face(ft, "/home/antan/ProgrammingOverall/Projects/RTSGameEngine/include/fonts/sans_mono.ttf", 0, &face)) {
             std::cerr << "Failed to load font\n";
         }
         FT_Set_Pixel_Sizes(face, 0, 48);
@@ -165,69 +170,74 @@ class Text : public Renderable {
             };
             Characters.insert(std::pair<char, Character>(c, character));
         }
+        
         glBindTexture(GL_TEXTURE_2D, 0);
 
         glyphsLoaded = true;
     }
 
-    void RenderText(Label label) { RenderText(label.text, label.x, label.y, label.scale, label.color); }
+    void RenderText(Label label, const glm::mat4& projection) { RenderText(label.text, label.x, label.y, label.scale, label.color, projection); }
 
-    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color) {
+    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color, const glm::mat4& projection) {
         glUseProgram(shaderProgram);
-        glUniform3f(glGetUniformLocation(shaderProgram, "textColor"), color.x, color.y, color.z);
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
-
+    
+        const float outlineThickness = 1.0f;
+        glm::vec3 outlineColor(0.0f, 0.0f, 0.0f);
+    
+        for (int dx = -1; dx <= 1; ++dx) {
+            for (int dy = -1; dy <= 1; ++dy) {
+                if (dx == 0 && dy == 0) continue;
+    
+                RenderTextRaw(text, x + dx * outlineThickness, y + dy * outlineThickness, scale, outlineColor);
+            }
+        }
+    
+        RenderTextRaw(text, x, y, scale, color);
+    
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    
+    void RenderTextRaw(std::string text, float x, float y, float scale, glm::vec3 color) {
+        glUniform3f(glGetUniformLocation(shaderProgram, "textColor"), color.x, color.y, color.z);
+    
         for (char c : text) {
             Character ch = Characters[c];
-
+    
             float xpos = x + ch.Bearing.x * scale;
             float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
+    
             float w = ch.Size.x * scale;
             float h = ch.Size.y * scale;
-
+    
             float vertices[6][4] = {
                 { xpos,     ypos + h,   0.0f, 0.0f },
                 { xpos,     ypos,       0.0f, 1.0f },
                 { xpos + w, ypos,       1.0f, 1.0f },
-
+    
                 { xpos,     ypos + h,   0.0f, 0.0f },
                 { xpos + w, ypos,       1.0f, 1.0f },
                 { xpos + w, ypos + h,   1.0f, 0.0f }
             };
-
+    
             glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-
             glDrawArrays(GL_TRIANGLES, 0, 6);
-
+    
             x += (ch.Advance >> 6) * scale;
         }
-        glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
-
-    void InitText(float screenWidth, float screenHeight) {
-        InitShaders();
-        DownloadEncoding();
-        DownloadGlyphs();
-
-        projection = glm::ortho(0.0f, screenWidth, 0.0f, screenHeight);
-    }
-
+    
     void AddLabel(std::string text, float x, float y, float scale = 1.0f, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)) {
         UI.push_back(Label(text, x, y, scale, color));
     }
 
-    void render(float screenLeft, float screenRight, float screenTop, float screenBottom) override {
-        for (Label label : UI) {
-            if (screenLeft <= label.x <= screenRight && screenBottom <= label.y <= screenTop) {
-                RenderText(label);
-            }
-        }
+    void render(float screenLeft, float screenRight, float screenBottom, float screenTop, const glm::mat4& projection, const glm::mat4& view) override {
+        for (Label label : UI) { RenderText(label, projection); }
+        UI.clear();
     }
 };
