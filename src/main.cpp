@@ -9,11 +9,11 @@
 int main() {
     Renderer renderer;
 
-    Menu menu;
+    //Menu menu;
     Text::getInstance().InitText();
     Map map;
 
-    renderer.addObject(&menu);
+    //renderer.addObject(&menu);
     renderer.addObject(&Text::getInstance(), 1.0f, true);
     renderer.addObject(&map);
 

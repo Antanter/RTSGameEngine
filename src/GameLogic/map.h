@@ -143,9 +143,9 @@ class Map : public Renderable {
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
         glBindVertexArray(VAO);
 
-        int minX = std::max(0, int(screenLeft / TILE_SIZE));
+        int minX = std::min(GRID_WIDTH, std::max(0, int(screenLeft / TILE_SIZE)));
         int maxX = std::max(0, std::min(GRID_WIDTH, int(screenRight / TILE_SIZE) + 1));
-        int minY = std::max(0, int(screenTop / TILE_SIZE));
+        int minY = std::min(GRID_WIDTH, std::max(0, int(screenTop / TILE_SIZE)));
         int maxY = std::max(0, std::min(GRID_HEIGHT, int(screenBottom / TILE_SIZE) + 1));
 
         char buffer[256];
