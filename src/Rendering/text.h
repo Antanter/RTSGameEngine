@@ -201,35 +201,104 @@ class Text : public Renderable {
     
     void RenderTextRaw(std::string text, float x, float y, glm::vec2 size, glm::vec3 color) {
         glUniform3f(glGetUniformLocation(shaderProgram, "textColor"), color.x, color.y, color.z);
-        float scale = size.y / size.x;
+    
+        std::vector<std::string> lines;
+        std::string currentLine;
+        std::string currentWord;
+    
+        float lineWidth = 0.0f;
+    
+        auto getTextWidth = [&](const std::string& str) {
+            float width = 0.0f;
+            for (char c : str) {
+                Character ch = Characters[c];
+                width += (ch.Advance >> 6);
+            }
+            return width;
+        };
     
         for (char c : text) {
-            Character ch = Characters[c];
-    
-            float xpos = x + ch.Bearing.x * scale;
-            float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-    
-            float w = ch.Size.x * scale;
-            float h = ch.Size.y * scale;
-    
-            float vertices[6][4] = {
-                { xpos,     ypos + h,   0.0f, 0.0f },
-                { xpos,     ypos,       0.0f, 1.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
-    
-                { xpos,     ypos + h,   0.0f, 0.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
-                { xpos + w, ypos + h,   1.0f, 0.0f }
-            };
-    
-            glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-    
-            x += (ch.Advance >> 6) * scale;
+            if (c == ' ') {
+                float wordWidth = getTextWidth(currentWord + ' ');
+                if (lineWidth + wordWidth > size.x) {
+                    lines.push_back(currentLine);
+                    currentLine.clear();
+                    lineWidth = 0.0f;
+                }
+                currentLine += currentWord + ' ';
+                lineWidth += wordWidth;
+                currentWord.clear();
+            } else if (c == '\n') {
+                currentLine += currentWord;
+                lines.push_back(currentLine);
+                currentLine.clear();
+                currentWord.clear();
+                lineWidth = 0.0f;
+            } else {
+                currentWord += c;
+            }
         }
-    }  
+
+        if (!currentWord.empty()) {
+            float wordWidth = getTextWidth(currentWord);
+            if (lineWidth + wordWidth > size.x) {
+                lines.push_back(currentLine);
+                currentLine = currentWord;
+            } else {
+                currentLine += currentWord;
+            }
+        }
+        if (!currentLine.empty()) {
+            lines.push_back(currentLine);
+        }
+
+        float maxLineHeight = 0.0f;
+        for (char c : text) {
+            Character ch = Characters[c];
+            maxLineHeight = std::max(maxLineHeight, (float)ch.Size.y);
+        }
+        float totalTextHeight = lines.size() * maxLineHeight;
+
+        float scaleX = size.x / size.x;
+        float scaleY = size.y / totalTextHeight;
+        float scale = scaleY;
+
+        float startY = y + size.y - maxLineHeight * scale;
+        for (const std::string& line : lines) {
+            float lineWidthPx = getTextWidth(line) * scale;
+            float startX = x + (size.x - lineWidthPx) / 2.0f;
+    
+            float cursorX = startX;
+            for (char c : line) {
+                Character ch = Characters[c];
+    
+                float xpos = cursorX + ch.Bearing.x * scale;
+                float ypos = startY - (ch.Size.y - ch.Bearing.y) * scale;
+    
+                float w = ch.Size.x * scale;
+                float h = ch.Size.y * scale;
+    
+                float vertices[6][4] = {
+                    { xpos,     ypos + h,   0.0f, 0.0f },
+                    { xpos,     ypos,       0.0f, 1.0f },
+                    { xpos + w, ypos,       1.0f, 1.0f },
+    
+                    { xpos,     ypos + h,   0.0f, 0.0f },
+                    { xpos + w, ypos,       1.0f, 1.0f },
+                    { xpos + w, ypos + h,   1.0f, 0.0f }
+                };
+    
+                glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+                glBindBuffer(GL_ARRAY_BUFFER, VBO);
+                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+    
+                cursorX += (ch.Advance >> 6) * scale;
+            }
+
+            startY -= maxLineHeight * scale;
+        }
+    }        
     
     void AddLabel(std::string text, glm::vec2 position, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)) {
         UI.push_back(CharSeq(text, position, size, color));

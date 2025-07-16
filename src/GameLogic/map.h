@@ -148,10 +148,6 @@ class Map : public Renderable {
         int minY = std::min(GRID_WIDTH, std::max(0, int(screenTop / TILE_SIZE)));
         int maxY = std::max(0, std::min(GRID_HEIGHT, int(screenBottom / TILE_SIZE) + 1));
 
-        char buffer[256];
-        sprintf(buffer, "minX: %d, maxX: %d.\n minY: %d, maxY: %d", minX, maxX, minY, maxY);
-        Text::getInstance().AddLabel(buffer, glm::vec2(25.0f, 25.0f), glm::vec2(25.0f, 25.0f));
-
         for (int y = minY; y <= maxY; ++y) {
             for (int x = minX; x <= maxX; ++x) {
                 drawTile(x, y);

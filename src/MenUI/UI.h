@@ -159,20 +159,27 @@ class Button : public UIElem {
     private:
 
     std::string text;
-
+    
     public:
 
     Button(std::string text, glm::vec2 position, glm::vec2 size, glm::vec3 color = glm::vec3(0.3f, 0.3f, 0.8f)) : UIElem(position, size, color), text(text) {}
-    
+
     void render(float screenLeft, float screenRight, float screenBottom, float screenTop, const glm::mat4& projection, const glm::mat4& view) override {
         drawQuad(position, size, color, projection);
-        printf("ergwgerg");
         Text::getInstance().RenderText(
             text,
-            position,
-            size,
+            glm::vec2(position.x + 10.0f, position.y + 10.0f),
+            glm::vec2(size.x - 20.0f, size.y - 20.0f),
             color,
             projection
         );
+    }
+
+    bool isHovered(float mouseX, float mouseY) const {
+        return mouseX >= position.x && mouseX <= position.x + size.x && mouseY >= position.y && mouseY <= position.y + size.y;
+    }
+
+    bool isClicked(float mouseX, float mouseY, int mouseButton = GLFW_MOUSE_BUTTON_LEFT) const {
+        return isHovered(mouseX, mouseY) && glfwGetMouseButton(glfwGetCurrentContext(), mouseButton) == GLFW_PRESS;
     }
 };
