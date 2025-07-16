@@ -17,14 +17,13 @@
 class Text : public Renderable {
     private:
 
-    struct Label {
+    struct CharSeq {
         std::string text;
-        float x;
-        float y;
-        float scale; 
+        glm::vec2 position;
+        glm::vec2 size;
         glm::vec3 color;
     
-        Label(std::string text, float x, float y, float scale, glm::vec3 color) : text(text), x(x), y(y), scale(scale), color(color) {}
+        CharSeq(std::string text, glm::vec2 position, glm::vec2 size, glm::vec3 color) : text(text), position(position), size(size), color(color) {}
     };
 
     FT_Face face;
@@ -70,7 +69,7 @@ class Text : public Renderable {
         unsigned int Advance;
     };
 
-    std::vector<Label> UI;
+    std::vector<CharSeq> UI;
     std::map<char, Character> Characters;
 
     Text() {}
@@ -176,9 +175,9 @@ class Text : public Renderable {
         glyphsLoaded = true;
     }
 
-    void RenderText(Label label, const glm::mat4& projection) { RenderText(label.text, label.x, label.y, label.scale, label.color, projection); }
+    void RenderText(CharSeq text, const glm::mat4& projection) { RenderText(text.text, text.position, text.size, text.color, projection); }
 
-    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color, const glm::mat4& projection) {
+    void RenderText(std::string text, glm::vec2 position, glm::vec2 size, glm::vec3 color, const glm::mat4& projection) {
         glUseProgram(shaderProgram);
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glActiveTexture(GL_TEXTURE0);
@@ -190,19 +189,19 @@ class Text : public Renderable {
         for (int dx = -1; dx <= 1; ++dx) {
             for (int dy = -1; dy <= 1; ++dy) {
                 if (dx == 0 && dy == 0) continue;
-    
-                RenderTextRaw(text, x + dx * outlineThickness, y + dy * outlineThickness, scale, outlineColor);
+                RenderTextRaw(text, position.x + dx * outlineThickness, position.y + dy * outlineThickness, size, outlineColor);
             }
         }
     
-        RenderTextRaw(text, x, y, scale, color);
+        RenderTextRaw(text, position.x, position.y, size, color);
     
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     
-    void RenderTextRaw(std::string text, float x, float y, float scale, glm::vec3 color) {
+    void RenderTextRaw(std::string text, float x, float y, glm::vec2 size, glm::vec3 color) {
         glUniform3f(glGetUniformLocation(shaderProgram, "textColor"), color.x, color.y, color.z);
+        float scale = size.y / size.x;
     
         for (char c : text) {
             Character ch = Characters[c];
@@ -230,14 +229,14 @@ class Text : public Renderable {
     
             x += (ch.Advance >> 6) * scale;
         }
-    }
+    }  
     
-    void AddLabel(std::string text, float x, float y, float scale = 1.0f, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)) {
-        UI.push_back(Label(text, x, y, scale, color));
+    void AddLabel(std::string text, glm::vec2 position, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f)) {
+        UI.push_back(CharSeq(text, position, size, color));
     }
 
     void render(float screenLeft, float screenRight, float screenBottom, float screenTop, const glm::mat4& projection, const glm::mat4& view) override {
-        for (Label label : UI) { RenderText(label, projection); }
+        for (CharSeq text : UI) { RenderText(text, projection); }
         UI.clear();
     }
 };

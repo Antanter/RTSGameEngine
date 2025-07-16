@@ -150,7 +150,7 @@ class Map : public Renderable {
 
         char buffer[256];
         sprintf(buffer, "minX: %d, maxX: %d.\n minY: %d, maxY: %d", minX, maxX, minY, maxY);
-        Text::getInstance().AddLabel(buffer, 25.0f, 25.0f);
+        Text::getInstance().AddLabel(buffer, glm::vec2(25.0f, 25.0f), glm::vec2(25.0f, 25.0f));
 
         for (int y = minY; y <= maxY; ++y) {
             for (int x = minX; x <= maxX; ++x) {

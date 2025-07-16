@@ -9,13 +9,8 @@
 #include <vector>
 #include <iostream>
 
-#include "text.h"
-
-class UI : public Renderable {
+class UI {
     private:
-
-    std::string title;
-    std::vector<Button> buttons;
 
     unsigned int VAO = 0, VBO = 0, shaderProgram = 0;
 
@@ -120,87 +115,64 @@ class UI : public Renderable {
 
     public:
 
-    UI(std::string menuTitle = "Main Menu") : title(menuTitle) {
+    UI() {
         initShaders();
         initBuffers();
     }
-
-    void addButton(const std::string& label, glm::vec2 position, glm::vec2 size) {
-        buttons.emplace_back(label, position, size);
-    }
-
-    void render(float x1, float x2, float y1, float y2, const glm::mat4& projection, const glm::mat4&) override {
-        glm::mat4 orthoProj = glm::ortho(0.0f, x2 - x1, 0.0f, y2 - y1);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        glm::vec2 menuPos((x2 - x1) / 2.0f - 200.0f, (y2 - y1) / 2.0f - 150.0f);
-        glm::vec2 menuSize(400.0f, 300.0f);
-        drawQuad(menuPos, menuSize, glm::vec3(0.1f, 0.1f, 0.1f), orthoProj);
-
-        for (Button& btn : buttons) {
-            btn.render();
-        }
-
-        Text::getInstance().RenderText(
-            title,
-            menuPos.x + 20.0f,
-            menuPos.y + menuSize.y - 40.0f,
-            1.0f,
-            glm::vec3(1.0f, 1.0f, 1.0f),
-            orthoProj
-        );
-
-        glDisable(GL_BLEND);
-    }
 };
 
-class UIElem {
+class UIElem : public UI {
     protected:
 
     glm::vec2 position;
     glm::vec2 size;
     glm::vec3 color;
 
-    UIElem(std::string text, glm::vec2 position, glm::vec3 color) : text(text), position(position), scale(scale), color(color) {}
-};
+    UIElem(glm::vec2 position, glm::vec2 size, glm::vec3 color) : position(position), size(size), color(color) {}
 
-class Label : public UI, public UIElem {
+    public:
+
+    virtual void render(float screenLeft, float screenRight, float screenBottom, float screenTop, const glm::mat4& projection, const glm::mat4& view) = 0;
+};    
+    
+class Label : public UIElem {
     private:
 
     std::string text;
 
     public:
 
-    Label(std::string text, glm::vec2 position, float scale, glm::vec3 color)
-     : text(text), position(position), scale(scale), color(color) {}
+    Label(std::string text, glm::vec2 position, glm::vec2 size, glm::vec3 color = glm::vec3(0.3f, 0.3f, 0.8f)) : UIElem(position, size, color), text(text) {}
 
-    void render(const glm::mat4& projection) override {
+    void render(float screenLeft, float screenRight, float screenBottom, float screenTop, const glm::mat4& projection, const glm::mat4& view) override {
         Text::getInstance().RenderText(
             text,
-            position.x,
-            position.y,
-            scale,
+            position,
+            size,
             color,
             projection
         );
     }
 };
 
-class Button : public UI {
+class Button : public UIElem {
     private:
 
-    Label label;
+    std::string text;
 
     public:
 
-    Button(Label lbl, glm::vec2 pos, glm::vec2 sz, glm::vec3 clr = glm::vec3(0.3f, 0.3f, 0.8f)) : label(lbl), position(pos), size(sz), color(clr) {}
+    Button(std::string text, glm::vec2 position, glm::vec2 size, glm::vec3 color = glm::vec3(0.3f, 0.3f, 0.8f)) : UIElem(position, size, color), text(text) {}
     
-    void render(const glm::mat4& projection) override {
-        glm::vec2 btnPos = position;
-        drawQuad(btnPos, size, color, projection);
-
-        label.render(projection);
+    void render(float screenLeft, float screenRight, float screenBottom, float screenTop, const glm::mat4& projection, const glm::mat4& view) override {
+        drawQuad(position, size, color, projection);
+        printf("ergwgerg");
+        Text::getInstance().RenderText(
+            text,
+            position,
+            size,
+            color,
+            projection
+        );
     }
 };
