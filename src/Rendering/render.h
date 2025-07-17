@@ -12,6 +12,7 @@
 
 class Renderable {
     public:
+    
     virtual void render(float screenLeft, float screenRight, float screenBottom, float screenTop, const glm::mat4& projection, const glm::mat4& view) = 0;
     virtual ~Renderable() {}
 };
