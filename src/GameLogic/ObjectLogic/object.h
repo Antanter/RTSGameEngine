@@ -13,9 +13,12 @@
 class GameObject {
     protected:
 
+    std::string name;
     glm::vec2 position;
     glm::vec2 size;
-    float rotation = 0.0f;
+    float rotation;
+    bool isStatic;
+    bool isPassable;
     
     public:
 
