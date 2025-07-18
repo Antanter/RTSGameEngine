@@ -49,10 +49,6 @@ class AIControlledEntity : public Entity {
 };
     
 class PlayerControlledEntity : public Entity {
-    protected:
-
-    //PlayerInput* input;
-
     public:
 
     void update(float deltaTime) override;
