@@ -28,12 +28,6 @@ void Camera::initInputCallbacks() {
     });
 }
 
-glm::mat4 Camera::getView() const {
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-position, 0.0f));
-    view = glm::scale(view, glm::vec3(zoom, zoom, 1.0f));
-    return view;
-}
-
 glm::mat4 Camera::getViewProjection(int screenWidth, int screenHeight) const {
     glm::mat4 projection = glm::ortho(
         0.0f, (float)screenWidth,

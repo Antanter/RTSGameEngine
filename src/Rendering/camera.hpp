@@ -19,7 +19,6 @@ class Camera {
     Camera();
     ~Camera();
 
-    glm::mat4 getView() const;
     glm::mat4 getViewProjection(int screenWidth, int screenHeight) const;
 
     void update(float deltaTime);

@@ -1,7 +1,13 @@
 #include "text.hpp"
 #include <glad/glad.h>
+#include <GL/gl.h>
 #include <iostream>
 #include <algorithm>
+#include <GL/glcorearb.h>
+#include <GL/glext.h>
+#include <GL/glew.h>
+#include <GLES/gl.h>
+#include <GLES3/gl3.h>
 
 Text::Text(const std::string& fontPath, unsigned int fontSize) {
     LoadShaders();
@@ -78,23 +84,20 @@ void Text::AddLabel(const std::string& text, glm::vec2 position,
     UI.emplace_back(text, position, size, color);
 }
 
-void Text::render(float, float, float, float,
-                  const glm::mat4& projection, const glm::mat4&) {
+void Text::render(const glm::mat4& viewjection) const {
     shader->use();
     shader->setUniform("text", 0);
     for (const auto& seq : UI)
-        RenderTextInternal(seq, projection);
+        RenderTextInternal(seq, viewjection);
     UI.clear();
 }
 
-void Text::RenderTextInternal(const CharSeq& seq, const glm::mat4& projection) {
-    RenderTextInternal(seq.text, seq.position, seq.size, seq.color, projection);
+void Text::RenderTextInternal(const CharSeq& seq, const glm::mat4& viewjection) const {
+    RenderTextInternal(viewjection, seq.text, seq.position, seq.size, seq.color);
 }
 
-void Text::RenderTextInternal(std::string text, glm::vec2 position,
-                              glm::vec2 size, glm::vec3 color,
-                              const glm::mat4& projection) {
-    shader->setUniform("projection", projection);
+void Text::RenderTextInternal(const glm::mat4& viewjection, const std::string& text, glm::vec2 position, glm::vec2 size, glm::vec3 color) const {
+    shader->setUniform("projection", viewjection);
     shader->setUniform("textColor", color);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
@@ -113,8 +116,7 @@ void Text::RenderTextInternal(std::string text, glm::vec2 position,
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Text::RenderTextRaw(const std::string& text, float x, float y,
-                         glm::vec2 size, glm::vec3 color) {
+void Text::RenderTextRaw(const std::string& text, float x, float y, glm::vec2 size, glm::vec3 color) const {
     shader->setUniform("textColor", color);
     std::vector<std::string> lines;
     std::string line, word;
@@ -122,7 +124,7 @@ void Text::RenderTextRaw(const std::string& text, float x, float y,
     auto getWidth = [&](const std::string& s){
         float w = 0;
         for (char c : s)
-            w += (Characters[c].Advance >> 6);
+            w += (Characters.at(c).Advance >> 6);
         return w;
     };
 
@@ -158,7 +160,7 @@ void Text::RenderTextRaw(const std::string& text, float x, float y,
 
     float maxH = 0;
     for (char c : text)
-        maxH = std::max(maxH, static_cast<float>(Characters[c].Size.y));
+        maxH = std::max(maxH, static_cast<float>(Characters.at(c).Size.y));
     float totalH = lines.size() * maxH;
     float scale = size.y / totalH;
     float startY = y + size.y - maxH * scale;

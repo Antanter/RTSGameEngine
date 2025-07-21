@@ -93,7 +93,7 @@ void Renderer::renderFrame(float deltaTime) {
     });
 
     for (auto& item : renderQueue) {
-        item.render();
+        item.render(camera.getViewProjection(width, height));
     }
 
     renderQueue.clear();

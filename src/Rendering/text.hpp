@@ -22,7 +22,6 @@ class Text : public Renderable {
         CharSeq(const std::string& t, glm::vec2 p, glm::vec2 s, glm::vec3 c)
             : text(t), position(p), size(s), color(c) {}
     };
-
     struct Character {
         unsigned int TextureID;
         glm::ivec2 Size;
@@ -34,12 +33,9 @@ class Text : public Renderable {
     void LoadFont(const std::string& fontPath, unsigned int fontSize);
     void LoadGlyphs();
 
-    void RenderTextInternal(const CharSeq& seq, const glm::mat4& projection);
-    void RenderTextInternal(const std::string& text, glm::vec2 position,
-                            glm::vec2 size, glm::vec3 color,
-                            const glm::mat4& projection);
-    void RenderTextRaw(const std::string& text, float x, float y,
-                       glm::vec2 size, glm::vec3 color);
+    void RenderTextInternal(const CharSeq& seq, const glm::mat4& projection) const;
+    void RenderTextInternal(const glm::mat4& viewjection, const std::string& text, glm::vec2 position, glm::vec2 size, glm::vec3 color) const;
+    void RenderTextRaw(const std::string& text, float x, float y, glm::vec2 size, glm::vec3 color) const;
 
     FT_Library ft{};
     FT_Face face{};
@@ -50,7 +46,7 @@ class Text : public Renderable {
 
     bool glyphsLoaded = false;
     std::map<char, Character> Characters;
-    std::vector<CharSeq> UI;
+    mutable std::vector<CharSeq> UI;
     
     public:
     
@@ -60,9 +56,7 @@ class Text : public Renderable {
     Text(const Text&) = delete;
     Text& operator=(const Text&) = delete;
 
+    void render(const glm::mat4& viewjection) const override;
     void InitText();
-    void AddLabel(const std::string& text, glm::vec2 position,
-                  glm::vec2 size, glm::vec3 color = glm::vec3(1.0f));
-
-    void render(const glm::mat4& projection, const glm::mat4& view) override;
+    void AddLabel(const std::string& text, glm::vec2 position, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f));
 };
