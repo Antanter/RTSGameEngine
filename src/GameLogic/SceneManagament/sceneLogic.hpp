@@ -3,7 +3,12 @@
 #include "scene.hpp"
 
 class SceneManager {
-public:
+    private:
+
+    std::unordered_map<std::string, std::shared_ptr<Scene>> scenes;
+    std::shared_ptr<Scene> activeScene;
+    
+    public:
     SceneManager() = default;
     ~SceneManager() = default;
 
@@ -11,8 +16,4 @@ public:
     bool setActive(const std::string& name);
     void update();
     void render();
-
-private:
-    std::unordered_map<std::string, std::shared_ptr<Scene>> scenes;
-    std::shared_ptr<Scene> activeScene;
 };

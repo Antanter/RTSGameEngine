@@ -9,9 +9,8 @@
 #include <thread>
 
 void Game::init() {
+
 }
-
-
 
 void Game::run() {
     isRunning = true;
@@ -30,5 +29,6 @@ void Game::run() {
     }
 }
 
+void Game::shutdown() {
 
-void Game::shutdown() {}
+}

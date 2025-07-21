@@ -5,21 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "camera.hpp"
-
-class Renderable {
-    public:
-    virtual ~Renderable() = default;
-
-    virtual void render(const glm::mat4& projection, const glm::mat4& view) = 0;
-};
-
-struct RenderItem {
-    std::shared_ptr<Renderable> object;
-    float z;
-    bool fixed;
-    RenderItem(std::shared_ptr<Renderable> obj, float zLayer, bool isFixed)
-        : object(std::move(obj)), z(zLayer), fixed(isFixed) {}
-};
+#include "renderable.hpp"
 
 class Renderer {
     private:
@@ -34,7 +20,7 @@ class Renderer {
     Camera camera;
     int width, height;
     glm::mat4 orthoProj;
-    std::vector<RenderItem> renderQueue;
+    std::vector<Renderable> renderQueue;
 
     public:
 

@@ -88,14 +88,12 @@ void Renderer::renderFrame(float deltaTime) {
 
     camera.update(deltaTime);
     auto vp = camera.getViewProjection(width, height);
-
     std::sort(renderQueue.begin(), renderQueue.end(), [](auto &a, auto &b) {
         return a.z < b.z;
     });
 
-    for (RenderItem &item : renderQueue) {
-        const glm::mat4 &proj = item.fixed ? orthoProj : vp;
-        item.object->render(proj, camera.getView());
+    for (auto& item : renderQueue) {
+        item.render();
     }
 
     renderQueue.clear();
