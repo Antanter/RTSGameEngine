@@ -30,12 +30,9 @@ class Renderer {
     void initCallbacks();
     void configureOpenGL();
 
-    void renderFrame(float deltaTime);
-
     GLFWwindow* window = nullptr;
     Camera camera;
-    int width;
-    int height;
+    int width, height;
     glm::mat4 orthoProj;
     std::vector<RenderItem> renderQueue;
 
@@ -44,6 +41,6 @@ class Renderer {
     Renderer(int width, int height, const char* title = "RTS Engine");
     ~Renderer();
 
-    void runLoop();
+    void renderFrame(float deltaTime);
     void addObject(std::shared_ptr<Renderable> obj, float zLayer = 0.0f, bool isFixed = false);
 };

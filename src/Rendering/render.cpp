@@ -6,7 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Renderer::Renderer(int w, int h, const char* title)
-    : width(w), height(h), camera() {
+  : width(w), height(h), camera()
+{
     initGLFW();
     initWindow(title);
     initGLAD();
@@ -31,7 +32,20 @@ void Renderer::initGLFW() {
 }
 
 void Renderer::initWindow(const char* title) {
-    window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    GLFWmonitor* monitor = nullptr;
+
+    if (!width && !height) {
+        monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        if (!mode) {
+            throw std::runtime_error("Failed to get video mode for fullscreen");
+        }
+
+        width  = mode->width;
+        height = mode->height;
+    }
+
+    window = glfwCreateWindow(width, height, title, monitor, nullptr);
     if (!window) {
         glfwTerminate();
         throw std::runtime_error("Failed to create GLFW window");
@@ -85,19 +99,5 @@ void Renderer::renderFrame(float deltaTime) {
     }
 
     renderQueue.clear();
-}
-
-void Renderer::runLoop() {
-    using clock = std::chrono::high_resolution_clock;
-    auto prev = clock::now();
-
-    while (!glfwWindowShouldClose(window)) {
-        auto now = clock::now();
-        float deltaTime = std::chrono::duration<float>(now - prev).count();
-        prev = now;
-
-        glfwPollEvents();
-        renderFrame(deltaTime);
-        glfwSwapBuffers(window);
-    }
+    glfwSwapBuffers(window);
 }
