@@ -1,8 +1,18 @@
 #pragma once
 
-#include "TileType.hpp"
-
 #include <random>
+
+enum class TileType {
+    GROUND,
+    HOUSE,
+    ROAD,
+    WATER
+};
+
+enum class TileOccp {
+    FREE,
+    OCCUPIED
+};
 
 class Tile {
     private:
