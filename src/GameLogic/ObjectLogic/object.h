@@ -30,3 +30,11 @@ class GameObject {
     glm::vec2 getPosition() const { return position; }
     void setPosition(glm::vec2 pos) { position = pos; }
 };
+
+class Particle : public GameObject {
+
+};
+
+class Light : public GameObject {
+
+};

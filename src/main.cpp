@@ -1,5 +1,5 @@
-#include "Rendering/render.h"
-#include "Rendering/text.h"
+#include "Rendering/render.hpp"
+#include "Rendering/text.hpp"
 #include "GameLogic/map.h"
 #include "MenUI/menu.h"
 
