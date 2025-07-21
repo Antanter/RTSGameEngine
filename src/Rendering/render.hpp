@@ -33,15 +33,15 @@ class Renderer {
     void renderFrame(float deltaTime);
 
     GLFWwindow* window = nullptr;
-    Camera      camera;
-    int         width;
-    int         height;
-    glm::mat4   orthoProj;
+    Camera camera;
+    int width;
+    int height;
+    glm::mat4 orthoProj;
     std::vector<RenderItem> renderQueue;
 
     public:
 
-    Renderer(int width, int height, const char* title = "RTS");
+    Renderer(int width, int height, const char* title = "RTS Engine");
     ~Renderer();
 
     void runLoop();
