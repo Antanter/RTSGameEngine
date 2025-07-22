@@ -20,7 +20,6 @@ struct TransformComponent {
 };
 
 class TransformAdapter : public IComponent {
-
     public:
 
     TransformComponent data;

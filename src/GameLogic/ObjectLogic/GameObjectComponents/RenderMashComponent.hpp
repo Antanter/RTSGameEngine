@@ -19,7 +19,7 @@ class MeshRendererComponent : public IComponent {
         mesh.draw();
     }
 
-    void setTransformAdapter(TransformAdapter* adapter) {
+    void MeshRendererAdapter(MeshRendererAdapter* adapter) {
         meshTransform = adapter;
     }
 };
