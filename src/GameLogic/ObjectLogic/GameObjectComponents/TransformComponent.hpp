@@ -25,5 +25,4 @@ class TransformAdapter : public IComponent {
     TransformComponent data;
 
     TransformAdapter(const TransformComponent& tc) : data(tc) {}
-    void render(const glm::mat4& vp) override {}
 };

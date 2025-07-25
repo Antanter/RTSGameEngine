@@ -89,7 +89,7 @@ void Renderer::renderFrame(float deltaTime) {
     camera.update(deltaTime);
     auto vp = camera.getViewProjection(width, height);
     std::sort(renderQueue.begin(), renderQueue.end(), [](auto &a, auto &b) {
-        return a.z < b.z;
+        return a.zLayer < b.zLayer;
     });
 
     for (auto& item : renderQueue) {

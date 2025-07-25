@@ -10,9 +10,8 @@ find_package(glfw3 REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(OpenAL REQUIRED)
 
-add_executable(RTSGameEngine
-    src/main.cpp
-)
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+add_executable(RTSGameEngine ${SOURCE_FILES})
 
 include_directories(/usr/include/freetype2)
 

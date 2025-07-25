@@ -21,5 +21,6 @@ class SoundManager {
     SoundManager();
     ~SoundManager();
 
+    void init();
     void play(const std::string& name);
 };

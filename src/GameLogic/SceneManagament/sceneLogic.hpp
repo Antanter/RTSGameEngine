@@ -9,7 +9,6 @@ class SceneManager {
     std::shared_ptr<Scene> activeScene;
     
     public:
-    SceneManager() = default;
     ~SceneManager() = default;
 
     bool addScene(const std::string& name, const std::string& filepath);

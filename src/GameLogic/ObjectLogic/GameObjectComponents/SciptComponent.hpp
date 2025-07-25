@@ -13,8 +13,4 @@ class ScriptComponent : public IComponent {
     void update(float dt) override {
         script->update(dt);
     }
-
-    void render(const glm::mat4& vp) override {
-        script->render(vp);
-    }
 };

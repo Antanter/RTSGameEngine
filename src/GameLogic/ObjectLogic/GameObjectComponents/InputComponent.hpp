@@ -14,5 +14,4 @@ class InputAdapter : public IComponent {
     InputComponent data;
 
     InputAdapter(const InputComponent& tc) : data(tc) {}
-    void render(const glm::mat4& vp) override {}
 };

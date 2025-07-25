@@ -12,37 +12,33 @@
 #include <iostream>
 #include <algorithm>
 #include <type_traits>
+#include <unordered_map>
+#include <typeindex>
 
 class GameObject {
     private:
-    
-    std::vector<std::unique_ptr<IComponent>> components;
+    std::unordered_map<std::type_index, std::unique_ptr<IComponent>> components;
 
     public:
-
     template<typename T, typename... Args>
     T* addComponent(Args&&... args) {
-        static_assert(std::is_base_of<IComponent, T>::value, "T must inherit IComponent");
-        auto ptr = std::make_unique<T>(std::forward<Args>(args)...);
-        T* raw = ptr.get();
-        components.push_back(std::move(ptr));
-        return raw;
+        auto comp = std::make_unique<T>(std::forward<Args>(args)...);
+        comp->setOwner(this);
+        T* ptr = comp.get();
+        components[typeid(T)] = std::move(comp);
+        return ptr;
     }
 
     template<typename T>
     T* getComponent() {
-        for (auto& c : components) {
-            if (auto ptr = dynamic_cast<T*>(c.get()))
-                return ptr;
-        }
+        auto it = components.find(typeid(T));
+        if (it != components.end())
+            return dynamic_cast<T*>(it->second.get());
         return nullptr;
     }
 
     void update(float dt) {
-        for (auto& c : components) c->update(dt);
-    }
-
-    void render(const glm::mat4& vp) {
-        for (auto& c : components) c->render(vp);
+        for (auto& [type, comp] : components)
+            comp->update(dt);
     }
 };

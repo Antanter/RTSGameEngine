@@ -1,5 +1,3 @@
-#pragma once
-
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <sndfile.h>
@@ -12,7 +10,15 @@
 
 #include "sound.hpp"
 
-SoundManager::SoundManager() {
+SoundManager::~SoundManager() {
+    for (auto& pair : soundBuffers) {
+        alDeleteBuffers(1, &pair.second);
+    }
+    alcDestroyContext(context);
+    alcCloseDevice(device);
+}
+
+void SoundManager::init() {
     device = alcOpenDevice(nullptr);
     if (!device) {
         std::cerr << "Failed to open OpenAL device!\n";
@@ -20,17 +26,6 @@ SoundManager::SoundManager() {
     }
     context = alcCreateContext(device, nullptr);
     alcMakeContextCurrent(context);
-
-    //Include sound here using addSound(name, filepath)
-
-}
-
-SoundManager::~SoundManager() {
-    for (auto& pair : soundBuffers) {
-        alDeleteBuffers(1, &pair.second);
-    }
-    alcDestroyContext(context);
-    alcCloseDevice(device);
 }
 
 bool SoundManager::addSound(const std::string& name, const std::string& filepath) {

@@ -15,7 +15,6 @@ class Texture {
     void load();
 };
 
-
 class Material {
     private:
     std::shared_ptr<Shader> shader;

@@ -18,5 +18,4 @@ class Game {
 
     void init();
     void run();
-    void shutdown();
 };

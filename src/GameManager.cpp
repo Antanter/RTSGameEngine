@@ -1,5 +1,3 @@
-#pragma once
-
 #include "GameManager.hpp"
 #include "Sound/sound.hpp"
 #include "Rendering/render.hpp"
@@ -9,7 +7,7 @@
 #include <thread>
 
 void Game::init() {
-
+    soundMgr.init();
 }
 
 void Game::run() {
@@ -27,8 +25,4 @@ void Game::run() {
         InputHandler::pollEvents();
         renderer.renderFrame(deltaTime);
     }
-}
-
-void Game::shutdown() {
-
 }
