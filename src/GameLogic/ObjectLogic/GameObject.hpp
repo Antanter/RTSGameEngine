@@ -20,8 +20,7 @@ class GameObject {
     std::unordered_map<std::type_index, std::unique_ptr<IComponent>> components;
 
     public:
-    template<typename T, typename... Args>
-    T* addComponent(Args&&... args) {
+    template<typename T, typename... Args> T* addComponent(Args&&... args) {
         auto comp = std::make_unique<T>(std::forward<Args>(args)...);
         comp->setOwner(this);
         T* ptr = comp.get();
@@ -29,8 +28,7 @@ class GameObject {
         return ptr;
     }
 
-    template<typename T>
-    T* getComponent() {
+    template<typename T> T* getComponent() {
         auto it = components.find(typeid(T));
         if (it != components.end())
             return dynamic_cast<T*>(it->second.get());

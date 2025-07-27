@@ -9,7 +9,7 @@ Renderer::Renderer(int w, int h, const char* title)
   : width(w), height(h), camera()
 {
     initGLFW();
-    initWindow(title);
+    window.initWindow(title, w, h);
     initGLAD();
     initCallbacks();
     configureOpenGL();
@@ -31,33 +31,9 @@ void Renderer::initGLFW() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 }
 
-void Renderer::initWindow(const char* title) {
-    GLFWmonitor* monitor = nullptr;
-
-    if (!width && !height) {
-        monitor = glfwGetPrimaryMonitor();
-        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-        if (!mode) {
-            throw std::runtime_error("Failed to get video mode for fullscreen");
-        }
-
-        width  = mode->width;
-        height = mode->height;
-    }
-
-    window = glfwCreateWindow(width, height, title, monitor, nullptr);
-    if (!window) {
-        glfwTerminate();
-        throw std::runtime_error("Failed to create GLFW window");
-    }
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
-}
-
 void Renderer::initGLAD() {
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        glfwDestroyWindow(window);
-        glfwTerminate();
+        window.destroy();
         throw std::runtime_error("Failed to initialize GLAD");
     }
     std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;

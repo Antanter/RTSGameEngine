@@ -6,17 +6,17 @@
 #include <glm/glm.hpp>
 #include "camera.hpp"
 #include "renderable.hpp"
+#include "window.hpp"
 
 class Renderer {
     private:
 
     void initGLFW();
-    void initWindow(const char* title);
     void initGLAD();
     void initCallbacks();
     void configureOpenGL();
 
-    GLFWwindow* window = nullptr;
+    Window window;
     Camera camera;
     int width, height;
     glm::mat4 orthoProj;
