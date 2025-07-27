@@ -37,8 +37,5 @@ class GameObject {
         return nullptr;
     }
 
-    void update(float dt) {
-        for (auto& [type, comp] : components)
-            comp->update(dt);
-    }
+    void update(float dt) {}
 };
