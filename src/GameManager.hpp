@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Sound/sound.hpp"
-#include "Rendering/render.hpp"
-#include "GameLogic/SceneManagament/sceneLogic.hpp"
+#include "Rendering/Render.hpp"
+#include "GameLogic/SceneManagament/SceneManager.hpp"
 #include <chrono>
 
 class Game {

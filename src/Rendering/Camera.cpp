@@ -1,4 +1,4 @@
-#include "camera.hpp"
+#include "Camera.hpp"
 #include "../GameLogic/InputAndController/InputHandler.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

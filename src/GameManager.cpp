@@ -1,7 +1,7 @@
 #include "GameManager.hpp"
 #include "Sound/sound.hpp"
-#include "Rendering/render.hpp"
-#include "GameLogic/SceneManagament/sceneLogic.hpp"
+#include "Rendering/Render.hpp"
+#include "GameLogic/SceneManagament/SceneManager.hpp"
 #include "GameLogic/InputAndController/InputHandler.hpp"
 #include <chrono>
 #include <thread>

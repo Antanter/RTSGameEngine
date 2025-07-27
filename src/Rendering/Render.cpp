@@ -1,4 +1,4 @@
-#include "render.hpp"
+#include "Render.hpp"
 #include <glad/glad.h>
 #include <iostream>
 #include <algorithm>
