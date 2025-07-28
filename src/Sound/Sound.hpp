@@ -34,7 +34,8 @@ class SoundManager {
     void setVolume(const std::string& name, float volume) const;
 
     void setPosition(const std::string& name, float x, float y, float z);
-    void setListenerPosition(float x, float y, float z, float position[]);
+    void setListenerPosition(float x, float y, float z);
+    void setListenerPosition(float x, float y, float z, const float position[]);
 
     void playMusic(const std::string& filepath, bool loop = true);
     void stopMusic();

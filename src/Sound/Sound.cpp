@@ -130,7 +130,15 @@ void SoundManager::setPosition(const std::string& name, float x, float y, float 
     alSource3f(source, AL_POSITION, x, y, z);
 }
 
-void SoundManager::setListenerPosition(float x, float y, float z, float orientation[]={0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f}) {
-    alListenerfv(AL_ORIENTATION, orientation);
+void SoundManager::setListenerPosition(float x, float y, float z) {
+    float defaultOrientation[] = {
+        0.0f, 0.0f, -1.0f,
+        0.0f, 1.0f,  0.0f,
+    };
+    setListenerPosition(x, y, z, defaultOrientation);
+}
+
+void SoundManager::setListenerPosition(float x, float y, float z, const float orientation[6]) {
     alListener3f(AL_POSITION, x, y, z);
+    alListenerfv(AL_ORIENTATION, orientation);
 }
