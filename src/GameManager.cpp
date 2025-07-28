@@ -15,14 +15,9 @@ void Game::run() {
 
     using clock = std::chrono::high_resolution_clock;
     Renderer renderer(0, 0);
-    auto prev = clock::now();
 
     while (isRunning) {
-        auto now = clock::now();
-        float deltaTime = std::chrono::duration<float>(now - prev).count();
-        prev = now;
-
         InputHandler::pollEvents();
-        renderer.renderFrame(deltaTime);
+        renderer.renderFrame();
     }
 }

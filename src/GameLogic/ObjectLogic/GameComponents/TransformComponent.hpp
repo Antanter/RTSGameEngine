@@ -21,8 +21,6 @@ struct TransformComponent {
 
 class TransformAdapter : public IComponent {
     public:
-
     TransformComponent data;
-
     TransformAdapter(const TransformComponent& tc) : data(tc) {}
 };
