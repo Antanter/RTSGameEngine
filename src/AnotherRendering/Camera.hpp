@@ -39,7 +39,9 @@ class Camera {
     void Init();
 
     glm::mat4 getViewProjection(int screenWidth, int screenHeight) const;
+    glm::mat4 getViewProjection(glm::ivec2 screenSize) const;
     AABB getWorldBounds(int screenWidth, int screenHeight) const;
+    AABB getWorldBounds(const glm::ivec2& screenSize) const;
 
     void update(float deltaTime);
     void move(const glm::vec2& delta);

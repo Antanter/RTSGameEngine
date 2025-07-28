@@ -40,6 +40,10 @@ glm::mat4 Camera::getViewProjection(int screenWidth, int screenHeight) const {
     return projection * view;
 }
 
+glm::mat4 Camera::getViewProjection(glm::ivec2 screenSize) const {
+    return getViewProjection(screenSize.x, screenSize.y);
+}
+
 AABB Camera::getWorldBounds(int screenWidth, int screenHeight) const {
     float halfWidth  = (screenWidth  / zoom) * 0.5f;
     float halfHeight = (screenHeight / zoom) * 0.5f;
@@ -48,6 +52,10 @@ AABB Camera::getWorldBounds(int screenWidth, int screenHeight) const {
     glm::vec2 max = position + glm::vec2(halfWidth, halfHeight);
 
     return AABB{ min, max };
+}
+
+AABB Camera::getWorldBounds(const glm::ivec2& screenSize) const {
+    return getWorldBounds(screenSize.x, screenSize.y);
 }
 
 void Camera::move(const glm::vec2& delta) {

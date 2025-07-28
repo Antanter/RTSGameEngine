@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderBatcher.hpp"
+#include "FrameLimiter.hpp"
 #include "RenderQueue.hpp"
 #include "DrawBackend.hpp"
 #include "LayerManager.hpp"
@@ -12,6 +13,7 @@ class RenderSystem {
     RenderQueue renderQueue;
     Batcher batcher;
     LayerManager layerManager;
+    FrameLimiter frameLimiter;
     DrawBackend* drawBackend;
 
     Camera& camera;
