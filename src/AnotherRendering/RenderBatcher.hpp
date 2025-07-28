@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "Texture.hpp"
-#include "Vertex.hpp"
 #include "RenderObject.hpp"
 
 struct RenderBatch {

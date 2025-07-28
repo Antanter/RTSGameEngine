@@ -1,6 +1,9 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "Texture.hpp"
+#include "Additionals.hpp"
+#include "LayerManager.hpp"
 
 struct RenderObject {
     Texture* texture;
