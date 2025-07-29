@@ -1,13 +1,15 @@
 #pragma once
 
-#include "Sound/sound.hpp"
-#include "Rendering/Render.hpp"
+#include "Sound/Sound.hpp"
+#include "TimeLimiter.hpp"
 #include "GameLogic/SceneManagament/SceneManager.hpp"
+#include "AnotherRendering/RenderSystem.hpp"
 #include <chrono>
 
 class Game {
     private:
-    
+    TimeLimiter timeLimiter;
+    RenderSystem renderer;
     SceneManager sceneMgr;
     SoundManager soundMgr;
     bool isRunning = false;
@@ -16,4 +18,7 @@ class Game {
 
     void init();
     void run();
+
+    void update();
+    void render();
 };

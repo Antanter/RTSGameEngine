@@ -1,15 +1,15 @@
-#include "FrameLimiter.hpp"
+#include "TimeLimiter.hpp"
 #include <thread>
 
 using namespace std::chrono;
 
-FrameLimiter::FrameLimiter(int targetFPS) : targetFPS(targetFPS) {}
+TimeLimiter::TimeLimiter(int targetFPS) : targetFPS(targetFPS) {}
 
-void FrameLimiter::BeginFrame() {
+void TimeLimiter::BeginFrame() {
     frameStartTime = high_resolution_clock::now();
 }
 
-void FrameLimiter::EndFrame() {
+void TimeLimiter::EndFrame() {
     auto frameEndTime = high_resolution_clock::now();
     auto frameDuration = duration_cast<microseconds>(frameEndTime - frameStartTime);
 
@@ -24,6 +24,6 @@ void FrameLimiter::EndFrame() {
     }
 }
 
-float FrameLimiter::GetDeltaTime() const {
+float TimeLimiter::GetDeltaTime() const {
     return deltaTime;
 }

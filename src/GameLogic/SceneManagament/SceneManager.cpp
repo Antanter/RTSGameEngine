@@ -41,3 +41,7 @@ void SceneManager::update(const std::string& name) {
         std::cout << "Scene saved to: " << filepath << std::endl;
     }
 }
+
+std::shared_ptr<Scene> SceneManager::getScene() const {
+    return activeScene;
+}

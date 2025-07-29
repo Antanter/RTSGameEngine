@@ -2,14 +2,14 @@
 
 #include <chrono>
 
-class FrameLimiter {
+class TimeLimiter {
     private:
     const int targetFPS;
     std::chrono::high_resolution_clock::time_point frameStartTime;
     float deltaTime;
 
     public:
-    FrameLimiter(int targetFPS = 60);
+    TimeLimiter(int targetFPS = 60);
 
     void BeginFrame();
     void EndFrame();

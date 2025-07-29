@@ -15,7 +15,6 @@ void RenderSystem::Init() {
 }
 
 void RenderSystem::BeginFrame() {
-    frameLimiter.BeginFrame();
     SetClearColor(clearColor);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -73,8 +72,6 @@ void RenderSystem::EndFrame() {
 
     renderQueue.Clear();
     batcher.Clear();
-
-    frameLimiter.EndFrame();
 }
 
 void RenderSystem::RenderFrame() {

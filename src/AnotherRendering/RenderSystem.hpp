@@ -1,20 +1,24 @@
 #pragma once
 
 #include "RenderBatcher.hpp"
-#include "FrameLimiter.hpp"
 #include "RenderQueue.hpp"
 #include "DrawBackend.hpp"
 #include "LayerManager.hpp"
 #include "Camera.hpp"
 #include "Window.hpp"
 
+#include "../GameLogic/SceneManagament/Scene.hpp"
+
+#include <memory>
+
 class RenderSystem {
     private:
     RenderQueue renderQueue;
     Batcher batcher;
     LayerManager layerManager;
-    FrameLimiter frameLimiter;
     DrawBackend* drawBackend;
+
+    std::weak_ptr<Scene> currentScene;
 
     Camera& camera;
     Window window;
@@ -22,6 +26,8 @@ class RenderSystem {
     public:
     RenderSystem();
     ~RenderSystem();
+
+    void LoadSceneToRender(std::shared_ptr<Scene> scene);
 
     void Init();
     void BeginFrame();

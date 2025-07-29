@@ -17,4 +17,6 @@ class SceneManager {
     bool addScene(const std::string& name, const std::string& filepath);
     bool setActive(const std::string& name);
     void update(const std::string& name);
+
+    std::shared_ptr<Scene> getScene() const;
 };
