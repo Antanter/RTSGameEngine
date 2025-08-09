@@ -14,6 +14,14 @@ void RenderSystem::Init() {
     camera.Init();
 }
 
+void RenderSystem::SetScene(std::shared_ptr<Scene> scene) {
+    currentScene = scene;
+}
+
+void RenderSystem::ExitWindow() {
+    window.shouldClose();
+}
+
 void RenderSystem::BeginFrame() {
     SetClearColor(clearColor);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -22,8 +30,18 @@ void RenderSystem::BeginFrame() {
 void RenderSystem::CollectVisible() {
     AABB cameraBounds = camera.getWorldBounds(window.getSize());
 
-    /*auto visibleChunks = world.GetChunksInBounds(cameraBounds);
-    for (const auto& chunk : visibleChunks) {
+    if (auto scene = currentScene.lock()) {
+        const std::vector<GameObject>& objects = scene->getObjects();
+
+        for (const auto& objInfo : objects) {
+            objInfo.
+            if (renderable && renderable->IsVisible(cameraBounds)) {
+                renderQueue.Add(renderable->CreateRenderObject());
+            }
+        }
+    }
+
+    for (const auto& chunk : objects) {
         for (const auto& tile : chunk.tiles) {
             if (tile.IsVisible()) {
                 renderQueue.Add(CreateRenderObject(tile));
@@ -39,7 +57,7 @@ void RenderSystem::CollectVisible() {
 
     for (const auto& uiElement : uiManager.GetElements()) {
         renderQueue.Add(CreateRenderObject(uiElement));
-    }*/
+    }
 }
 
 void RenderSystem::SortAndBatch() {

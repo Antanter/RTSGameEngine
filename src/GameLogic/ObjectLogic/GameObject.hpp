@@ -35,5 +35,5 @@ class GameObject {
         return nullptr;
     }
 
-    void update(float dt) {}
+    void update() {}
 };

@@ -9,7 +9,7 @@ class ScriptComponent : public IComponent {
     public:
     ScriptComponent(std::unique_ptr<IComponent> script) : script(std::move(script)) {}
 
-    void update(float dt) override {
-        script->update(dt);
+    void update() override {
+        script->update();
     }
 };

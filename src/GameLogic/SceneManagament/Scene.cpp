@@ -11,6 +11,12 @@ void Scene::reset() {
     name.clear();
 }
 
+void Scene::update() {
+    for (auto object : objects) {
+        object.update();
+    }
+}
+
 bool Scene::loadFromFile(const std::string& filepath) {
     std::ifstream in(filepath);
     if (!in.is_open()) {
@@ -29,18 +35,18 @@ bool Scene::loadFromFile(const std::string& filepath) {
     }
 
     objects.clear();
-    for (const auto& jobj : j["objects"]) {
-        ObjectInfo obj;
-        obj.id = jobj.value("id", "");
-        obj.type = jobj.value("type", "");
+    // for (const auto& jobj : j["objects"]) {
+    //     GameObject obj;
+    //     obj.id = jobj.value("id", "");
+    //     obj.type = jobj.value("type", "");
 
-        auto pos = jobj.value("position", std::vector<float>{0, 0, 0});
-        auto rot = jobj.value("rotation", std::vector<float>{0, 0, 0});
-        if (pos.size() == 3) obj.position = glm::vec3(pos[0], pos[1], pos[2]);
-        if (rot.size() == 3) obj.rotation = glm::vec3(rot[0], rot[1], rot[2]);
+    //     auto pos = jobj.value("position", std::vector<float>{0, 0, 0});
+    //     auto rot = jobj.value("rotation", std::vector<float>{0, 0, 0});
+    //     if (pos.size() == 3) obj.position = glm::vec3(pos[0], pos[1], pos[2]);
+    //     if (rot.size() == 3) obj.rotation = glm::vec3(rot[0], rot[1], rot[2]);
 
-        objects.push_back(obj);
-    }
+    //     objects.push_back(obj);
+    // }
 
     return true;
 }
@@ -51,14 +57,14 @@ bool Scene::saveToFile(const std::string& filepath) const {
     j["cameraPosition"] = { cameraPosition.x, cameraPosition.y, cameraPosition.z };
 
     j["objects"] = json::array();
-    for (const auto& obj : objects) {
-        json o;
-        o["id"] = obj.id;
-        o["type"] = obj.type;
-        o["position"] = { obj.position.x, obj.position.y, obj.position.z };
-        o["rotation"] = { obj.rotation.x, obj.rotation.y, obj.rotation.z };
-        j["objects"].push_back(o);
-    }
+    // for (const auto& obj : objects) {
+    //     json o;
+    //     o["id"] = obj.id;
+    //     o["type"] = obj.type;
+    //     o["position"] = { obj.position.x, obj.position.y, obj.position.z };
+    //     o["rotation"] = { obj.rotation.x, obj.rotation.y, obj.rotation.z };
+    //     j["objects"].push_back(o);
+    // }
 
     std::ofstream out(filepath);
     if (!out.is_open()) {
@@ -76,8 +82,4 @@ const std::string& Scene::getName() const {
 
 const glm::vec3& Scene::getCameraPosition() const {
     return cameraPosition;
-}
-
-const std::vector<ObjectInfo>& Scene::getObjects() const {
-    return objects;
 }

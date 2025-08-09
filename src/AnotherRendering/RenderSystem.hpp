@@ -17,7 +17,6 @@ class RenderSystem {
     Batcher batcher;
     LayerManager layerManager;
     DrawBackend* drawBackend;
-
     std::weak_ptr<Scene> currentScene;
 
     Camera& camera;
@@ -27,7 +26,8 @@ class RenderSystem {
     RenderSystem();
     ~RenderSystem();
 
-    void LoadSceneToRender(std::shared_ptr<Scene> scene);
+    void SetScene(std::shared_ptr<Scene> scene);
+    void ExitWindow();
 
     void Init();
     void BeginFrame();

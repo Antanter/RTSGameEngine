@@ -18,7 +18,7 @@ SoundManager::~SoundManager() {
     alcCloseDevice(device);
 }
 
-void SoundManager::init() {
+void SoundManager::Init() {
     device = alcOpenDevice(nullptr);
     if (!device) {
         std::cerr << "Failed to open OpenAL device!\n";

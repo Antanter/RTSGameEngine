@@ -23,7 +23,3 @@ void TimeLimiter::EndFrame() {
         std::this_thread::sleep_for(milliseconds(sleepTime));
     }
 }
-
-float TimeLimiter::GetDeltaTime() const {
-    return deltaTime;
-}

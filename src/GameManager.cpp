@@ -6,29 +6,32 @@
 #include <thread>
 
 void Game::init() {
-
+    renderer.Init();
+    sceneMgr.Init();
+    soundMgr.Init();
 }
 
 void Game::run() {
-    isRunning = true;
+    while (true && !InputHandler::isKeyPressed(256)) update();
+    shutdown();
+}
 
-    while (isRunning) {
-        timeLimiter.BeginFrame();
-        InputHandler::pollEvents();
-        update();
-        render();
-        timeLimiter.EndFrame();
-    }
+void Game::shutdown() {
+    renderer.ExitWindow();
+
+    soundMgr.stopAll();
+    sceneMgr.stopAll();
+
+    glfwTerminate();
 }
 
 void Game::update() {
-    float dt = timeLimiter.GetDeltaTime();
-    sceneMgr.update(sceneMgr.getScene()->getName());
+    timeLimiter.BeginFrame();
 
-}
+    InputHandler::pollEvents();
 
-void Game::render() {
-    for (const auto& obj : sceneMgr.getScene()->getRenderables()) {
-        draw(obj);
-    }
+    sceneMgr.update();
+    renderer.RenderFrame();
+
+    timeLimiter.EndFrame();
 }

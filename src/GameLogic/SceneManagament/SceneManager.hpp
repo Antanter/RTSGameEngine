@@ -9,14 +9,17 @@ class SceneManager {
 
     std::unordered_map<std::string, std::shared_ptr<Scene>> scenes;
     std::unordered_map<std::string, std::string> filepaths;
-    std::shared_ptr<Scene> activeScene;
+    std::vector<std::shared_ptr<Scene>> activeScenes;
     
     public:
     ~SceneManager() = default;
 
-    bool addScene(const std::string& name, const std::string& filepath);
-    bool setActive(const std::string& name);
-    void update(const std::string& name);
+    void Init();
 
-    std::shared_ptr<Scene> getScene() const;
+    void addScene(const std::string& name, const std::string& filepath);
+    void setActive(const std::string& name);
+    void changeScene(const std::string& name);
+    void update();
+
+    void stopAll();
 };

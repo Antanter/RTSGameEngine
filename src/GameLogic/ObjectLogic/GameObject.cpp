@@ -1,7 +1,7 @@
 #include "GameObject.hpp"
 
-void GameObject::update(float dt) {
+void GameObject::update() {
     for (auto& [type, comp] : components) {
-        comp->update(dt);
+        comp->update();
     }
 }

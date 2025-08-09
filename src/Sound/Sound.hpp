@@ -23,7 +23,7 @@ class SoundManager {
     SoundManager();
     ~SoundManager();
 
-    void init();
+    void Init();
     void play(const std::string& name);
 
     void stop(const std::string& name) const;
