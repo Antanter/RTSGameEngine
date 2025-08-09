@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include <string>
 #include <vector>
@@ -10,7 +10,7 @@
 
 #include "Shaders.hpp"
 
-class Text : public Renderable {
+class Text {
     private:
 
     struct CharSeq {
@@ -58,4 +58,4 @@ class Text : public Renderable {
     void render(const glm::mat4& viewjection) const override;
     void InitText();
     void AddLabel(const std::string& text, glm::vec2 position, glm::vec2 size, glm::vec3 color = glm::vec3(1.0f));
-};
+}; */

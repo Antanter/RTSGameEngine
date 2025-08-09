@@ -2,22 +2,13 @@
 
 #include "GameComponents/IComponent.hpp"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <vector>
-#include <chrono>
-#include <thread>
-#include <iostream>
-#include <algorithm>
-#include <type_traits>
 #include <unordered_map>
 #include <typeindex>
+#include <memory>
 
 class GameObject {
     private:
-    std::unordered_map<std::type_index, std::unique_ptr<IComponent>> components;
+    std::unordered_map<std::type_index, std::shared_ptr<IComponent>> components;
 
     public:
     template<typename T, typename... Args> T* addComponent(Args&&... args) {
@@ -35,5 +26,7 @@ class GameObject {
         return nullptr;
     }
 
-    void update() {}
+    void update() {
+        for (auto& [type, comp] : components) comp->update();
+    }
 };

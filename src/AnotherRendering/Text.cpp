@@ -1,13 +1,12 @@
-#include "Text.hpp"
+/*#include "Text.hpp"
 #include <glad/glad.h>
 #include <GL/gl.h>
 #include <iostream>
 #include <algorithm>
 #include <GL/glcorearb.h>
 #include <GL/glext.h>
-#include <GL/glew.h>
-#include <GLES/gl.h>
-#include <GLES3/gl3.h>
+// #include <GLES/gl.h>
+// #include <GLES3/gl3.h>
 
 Text::Text(const std::string& fontPath, unsigned int fontSize) {
     LoadShaders();
@@ -191,4 +190,4 @@ void Text::RenderTextRaw(const std::string& text, float x, float y, glm::vec2 si
         }
         startY -= maxH * scale;
     }
-}
+} */

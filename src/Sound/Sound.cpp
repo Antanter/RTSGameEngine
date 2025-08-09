@@ -55,7 +55,7 @@ bool SoundManager::addSound(const std::string& name, const std::string& filepath
 
 ALuint SoundManager::findSource(const std::string& name) const {
     auto it = sources.find(name);
-    if (it == sources.end()) return;
+    if (it == sources.end()) return 0;
 
     ALuint source = it->second;
     return source;
@@ -63,7 +63,7 @@ ALuint SoundManager::findSource(const std::string& name) const {
 
 ALuint SoundManager::findBuffer(const std::string& name) const {
     auto it = soundBuffers.find(name);
-    if (it == soundBuffers.end()) return;
+    if (it == soundBuffers.end()) return 0;
 
     ALuint buffer = it->second;
     return buffer;

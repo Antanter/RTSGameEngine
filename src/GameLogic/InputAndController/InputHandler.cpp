@@ -12,7 +12,7 @@ std::unordered_map<int, std::function<void()>> InputHandler::mouseButtonUpCallba
 std::function<void(double, double)> InputHandler::mouseMoveCallback = nullptr;
 std::function<void(double, double)> InputHandler::mouseScrollCallback = nullptr;
 
-void InputHandler::init(GLFWwindow* win) {
+void InputHandler::Init(GLFWwindow* win) {
     window = win;
 
     glfwSetKeyCallback(window, keyCallback);

@@ -6,10 +6,12 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
 
-#include "GameLogic/ObjectLogic/GameComponents/TransformComponent.hpp"
-#include "GameLogic/ObjectLogic/GameComponents/RendererComponent.hpp"
+#include "../GameLogic/ObjectLogic/GameComponents/TransformComponent.hpp"
+#include "../GameLogic/ObjectLogic/GameComponents/RendererComponent.hpp"
 #include "Additionals.hpp"
 #include "RenderObject.hpp"
+
+RenderSystem::RenderSystem() : window(800, 600, "My Game"), camera(glm::vec2(0.f, 0.f), 1.f) {}
 
 void RenderSystem::Init() {
     window.Init();

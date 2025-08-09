@@ -1,8 +1,8 @@
 #pragma once
 #include "IComponent.hpp"
 #include <glm/glm.hpp>
-#include "AnotherRendering/Texture.hpp"
-#include "AnotherRendering/LayerManager.hpp"
+#include "../../../AnotherRendering/Texture.hpp"
+#include "../../../AnotherRendering/LayerManager.hpp"
 
 struct RendererComponent : public IComponent {
     Texture* texture;

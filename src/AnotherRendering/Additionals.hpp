@@ -2,8 +2,6 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 struct Vertex {
     glm::vec2 position;
@@ -15,8 +13,6 @@ struct Color {
     float r, g, b, a;
 };
 
-Color clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+extern Color clearColor;
 
-void SetClearColor(const Color& color) {
-    glClearColor(color.r, color.g, color.b, color.a);
-}
+void SetClearColor(const Color& color);

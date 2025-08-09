@@ -9,5 +9,5 @@ class RenderQueue {
     public:
     void Clear();
     void Add(const RenderObject&);
-    const std::vector<RenderObject>& GetItems() const;
+    std::vector<RenderObject>& GetItems();
 };

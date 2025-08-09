@@ -29,7 +29,7 @@ class InputHandler {
 
     public:
 
-    static void init(GLFWwindow* win);
+    static void Init(GLFWwindow* win);
 
     static void onKeyDown(int key, std::function<void()> callback);
     static void onKeyUp(int key, std::function<void()> callback);

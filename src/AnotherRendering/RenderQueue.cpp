@@ -8,6 +8,6 @@ void RenderQueue::Clear() {
     objects.clear();
 }
 
-const std::vector<RenderObject>& RenderQueue::GetItems() const {
+std::vector<RenderObject>& RenderQueue::GetItems() {
     return objects;
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <map>
 #include <set>
 
@@ -27,5 +28,4 @@ class LayerManager {
     void DisableLayer(RenderLayer layer);
     void EnableLayer(RenderLayer layer);
     bool IsLayerEnabled(RenderLayer layer) const;
-
 };

@@ -23,5 +23,5 @@ class Scene {
 
     const std::string& getName() const;
     const glm::vec3& getCameraPosition() const;
-    const std::vector<GameObject>& getObjects() const;
+    const std::vector<GameObject>& getObjects() const { return objects; }
 };

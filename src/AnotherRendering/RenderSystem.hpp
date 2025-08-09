@@ -18,7 +18,7 @@ class RenderSystem {
     DrawBackend* drawBackend;
     std::weak_ptr<Scene> currentScene;
 
-    Camera& camera;
+    Camera camera;
     Window window;
 
     public:

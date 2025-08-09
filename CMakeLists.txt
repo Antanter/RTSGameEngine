@@ -20,15 +20,15 @@ set(CMAKE_TOOLCHAIN_FILE "C:/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake")
 target_include_directories(RTSGameEngine
     PRIVATE
     ${CMAKE_SOURCE_DIR}/include
-    /usr/include/freetype2
+    ${FREETYPE_INCLUDE_DIRS}
 )
 
 target_link_libraries(RTSGameEngine
     glfw
     OpenGL::GL
     GLUT::GLUT
-    Freetype::Freetype
     OpenAL::OpenAL
+    ${FREETYPE_LIBRARIES}
 )
 
 # OS-specific settings

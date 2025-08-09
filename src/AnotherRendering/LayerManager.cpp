@@ -1,6 +1,5 @@
 #include "LayerManager.hpp"
 
-#include <vector>
 #include <algorithm>
 
 void LayerManager::InitDefaultOrder() {
