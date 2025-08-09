@@ -13,4 +13,7 @@ struct RenderObject {
     RenderLayer layer;
     float z;
     glm::vec4 color;
+
+    RenderObject(Texture* tex, const glm::vec2& pos, const glm::vec2& scl, float rot, RenderLayer lay, float depth, const glm::vec4& col)
+        : texture(tex), position(pos), scale(scl), rotation(rot), layer(lay), z(depth), color(col) {}
 };

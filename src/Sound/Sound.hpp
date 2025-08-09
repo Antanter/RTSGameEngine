@@ -40,4 +40,6 @@ class SoundManager {
     void playMusic(const std::string& filepath, bool loop = true);
     void stopMusic();
     void fadeOutMusic(float seconds);
+
+    void stopAll();
 };

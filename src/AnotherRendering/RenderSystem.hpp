@@ -1,6 +1,5 @@
 #pragma once
 
-#include "RenderBatcher.hpp"
 #include "RenderQueue.hpp"
 #include "DrawBackend.hpp"
 #include "LayerManager.hpp"

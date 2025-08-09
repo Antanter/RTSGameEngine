@@ -6,6 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
 
+#include "GameLogic/ObjectLogic/GameComponents/TransformComponent.hpp"
+#include "GameLogic/ObjectLogic/GameComponents/RendererComponent.hpp"
 #include "Additionals.hpp"
 #include "RenderObject.hpp"
 
@@ -33,30 +35,17 @@ void RenderSystem::CollectVisible() {
     if (auto scene = currentScene.lock()) {
         const std::vector<GameObject>& objects = scene->getObjects();
 
-        for (const auto& objInfo : objects) {
-            objInfo.
-            if (renderable && renderable->IsVisible(cameraBounds)) {
-                renderQueue.Add(renderable->CreateRenderObject());
+        for (const auto& object : objects) {
+            const auto& render = object.getComponent<RendererComponent>();
+            if (!render) continue;
+
+            const auto& transform = object.getComponent<TransformComponent>();
+            if (render && cameraBounds.contains(transform->position)) {
+                RenderObject renderObject(render->texture, glm::vec2(transform->position), glm::vec2(transform->scale), 
+                                            transform->rotation.z, render->layer, transform->position.z, render->color);
+                renderQueue.Add(renderObject);
             }
         }
-    }
-
-    for (const auto& chunk : objects) {
-        for (const auto& tile : chunk.tiles) {
-            if (tile.IsVisible()) {
-                renderQueue.Add(CreateRenderObject(tile));
-            }
-        }
-    }
-
-    for (const auto& entity : world.GetEntities()) {
-        if (entity.IsRenderable() && cameraBounds.Contains(entity.position)) {
-            renderQueue.Add(CreateRenderObject(entity));
-        }
-    }
-
-    for (const auto& uiElement : uiManager.GetElements()) {
-        renderQueue.Add(CreateRenderObject(uiElement));
     }
 }
 

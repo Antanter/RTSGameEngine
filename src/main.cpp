@@ -2,6 +2,5 @@
 
 int main() {
     Game gameManager;
-    gameManager.init();
     gameManager.run();
 }

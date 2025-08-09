@@ -28,7 +28,7 @@ class GameObject {
         return ptr;
     }
 
-    template<typename T> T* getComponent() {
+    template<typename T> T* getComponent() const {
         auto it = components.find(typeid(T));
         if (it != components.end())
             return dynamic_cast<T*>(it->second.get());

@@ -142,3 +142,7 @@ void SoundManager::setListenerPosition(float x, float y, float z, const float or
     alListener3f(AL_POSITION, x, y, z);
     alListenerfv(AL_ORIENTATION, orientation);
 }
+
+void SoundManager::stopAll() {
+    for (auto& [name, source] : sources) alSourceStop(source);
+}

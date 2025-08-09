@@ -12,6 +12,7 @@ void Game::init() {
 }
 
 void Game::run() {
+    init();
     while (true && !InputHandler::isKeyPressed(256)) update();
     shutdown();
 }
