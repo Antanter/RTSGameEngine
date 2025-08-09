@@ -86,3 +86,5 @@ vcpkg_packages/
 .cache/
 .clangd/
 compile_commands.json
+
+.vscode
